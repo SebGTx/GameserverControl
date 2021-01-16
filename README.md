@@ -41,4 +41,8 @@ And maybe:
 - Implement SSL web service
 - Implement authenticated web service
 
-_I'm French but this application was entirely developed in English, why? do i really need to answer this question? I'm sorry if my English make your eyes bleed when you read it, you are welcome to correct my work if you want._
+## What support can i give you:
+- None, do it yourself :-)
+
+_I'm French but this application was entirely developed in English. Why? Do i really need to answer this question?_
+_I'm sorry if my English make your eyes bleed when you read it, you are welcome to correct my work if you want._
