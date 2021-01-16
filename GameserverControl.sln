@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameserverControl", "GameserverControl\GameserverControl.csproj", "{01C40B10-F395-40BC-A667-EE40307AA98D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GCSetComputerSettings", "GCSetComputerSettings\GCSetComputerSettings.csproj", "{A7C0B520-2658-4C89-A1E3-B4D44268E654}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{01C40B10-F395-40BC-A667-EE40307AA98D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01C40B10-F395-40BC-A667-EE40307AA98D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01C40B10-F395-40BC-A667-EE40307AA98D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01C40B10-F395-40BC-A667-EE40307AA98D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7C0B520-2658-4C89-A1E3-B4D44268E654}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7C0B520-2658-4C89-A1E3-B4D44268E654}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7C0B520-2658-4C89-A1E3-B4D44268E654}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7C0B520-2658-4C89-A1E3-B4D44268E654}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E606F2E1-4273-4C1D-8E28-B1C801C96344}
+	EndGlobalSection
+EndGlobal
