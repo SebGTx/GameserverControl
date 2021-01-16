@@ -35,14 +35,14 @@ GameserverControl is the first one, I will create another GitHub repos for the s
 - Rotate log after the game server shutdown
 - Get log from the web service
 - Support wildcard in logs parameter if the log filename change every time you launch the game server
-- Develop the PHP app for the NAS that can start the computer with WOL and control the game server thru the web service
+- Develop the PHP application for the NAS that can start the computer with WOL and control the game server thru the web service
 
 And maybe:
 - Implement SSL web service
 - Implement authenticated web service
 
 ## What support can i give you:
-- None, do it yourself :-)
+- None, do it yourself :grin:
 
 _I'm French but this application was entirely developed in English. Why? Do i really need to answer this question?_
 _I'm sorry if my English make your eyes bleed when you read it, you are welcome to correct my work if you want._
