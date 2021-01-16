@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -48,6 +49,9 @@ namespace GameserverControl
         // Start
         public GCApplicationContext()
         {
+            string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            Console.WriteLine(version);
+
             // Initialize GameProcess dictionnary
             GameProcess = new Dictionary<string, Process> { };
 
@@ -62,6 +66,8 @@ namespace GameserverControl
             GamesToolStripMenuItem.Name = "games";
             GamesToolStripMenuItem.DropDownItems.Add(new ToolStripMenuItem("New", Properties.Resources.controller_add, new EventHandler(MenuGameNewEdit_Click)));
             trayIcon.ContextMenuStrip.Items.Add(GamesToolStripMenuItem);
+            trayIcon.ContextMenuStrip.Items.Add(new ToolStripSeparator());
+            trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem("About", Properties.Resources.information, new EventHandler(MenuAbout_Click)));
             trayIcon.ContextMenuStrip.Items.Add(new ToolStripSeparator());
             trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem("Exit", Properties.Resources.door_in, new EventHandler(MenuExit_Click)));
 
@@ -324,6 +330,12 @@ namespace GameserverControl
             }
         }
 
+        private void MenuAbout_Click(object sender, EventArgs e)
+        {
+            AboutBox GameConfigForm = new AboutBox();
+            GameConfigForm.ShowDialog();
+        }
+         
         private void MenuExit_Click(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show("Do you want to close Gameserver Control ?", "Confirmation", MessageBoxButtons.YesNo);

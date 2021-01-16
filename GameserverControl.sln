@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameserverControl", "GameserverControl\GameserverControl.csproj", "{01C40B10-F395-40BC-A667-EE40307AA98D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A7C0B520-2658-4C89-A1E3-B4D44268E654} = {A7C0B520-2658-4C89-A1E3-B4D44268E654}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GCSetComputerSettings", "GCSetComputerSettings\GCSetComputerSettings.csproj", "{A7C0B520-2658-4C89-A1E3-B4D44268E654}"
 EndProject
