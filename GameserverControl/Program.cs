@@ -121,6 +121,7 @@ namespace GameserverControl
             }
 
             // Create a Http server and start listening for incoming connections
+            url = "http://+:" + WebServerXMLNode.SelectSingleNode("./Port").InnerText + "/";
             listener = new HttpListener();
             listener.Prefixes.Add(url);
             try
@@ -156,13 +157,27 @@ namespace GameserverControl
         private XmlNode XMLCreateOrUpdateWebServerConfig(XmlNode WebServerConfig)
         {
             XmlNode tmpNode;
+            // Port Node
             tmpNode = WebServerConfig.SelectSingleNode("./Port");
             if (tmpNode == null)
             {
                 tmpNode = WebServerConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "Port", null));
                 tmpNode.InnerText = "8008";
             }
-            url = "http://+:" + tmpNode.InnerText + "/";
+            // Login Node
+            tmpNode = WebServerConfig.SelectSingleNode("./Login");
+            if (tmpNode == null)
+            {
+                tmpNode = WebServerConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "Login", null));
+                tmpNode.InnerText = "admin";
+            }
+            // Password Node
+            tmpNode = WebServerConfig.SelectSingleNode("./Password");
+            if (tmpNode == null)
+            {
+                tmpNode = WebServerConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "Password", null));
+                tmpNode.InnerText = "admin";
+            }
             return WebServerConfig;
         }
 
@@ -578,10 +593,38 @@ namespace GameserverControl
                 Console.WriteLine(req.UserAgent);
                 Console.WriteLine();
 
+                // Check authentification
+                string authorization = req.Headers["Authorization"];
+                string userInfo;
+                string username = "";
+                string password = "";
+                if (authorization != null)
+                {
+                    byte[] tempConverted = Convert.FromBase64String(authorization.Replace("Basic ", "").Trim());
+                    userInfo = System.Text.Encoding.UTF8.GetString(tempConverted);
+                    string[] usernamePassword = userInfo.Split(':');
+                    username = usernamePassword[0];
+                    password = usernamePassword[1];
+                }
+
+                // Reply
                 string[] result = { "text/html", "<!DOCTYPE><html><head><title>Gameserver Control</title></head><body></body></html>" };
-                if ((req.HttpMethod == "GET") && (req.Url.AbsolutePath == "/config")) { result = HTTPResultConfig(); }
-                if ((req.HttpMethod == "GET") && (req.Url.AbsolutePath == "/start")) { result = HTTPResultStart(req.QueryString["guid"]); }
-                if ((req.HttpMethod == "GET") && (req.Url.AbsolutePath == "/stop")) { result = HTTPResultStop(req.QueryString["guid"]); }
+                if (
+                    username == GCXMLConfig.SelectSingleNode("/Configs/WebServer/Login").InnerText &&
+                    password == GCXMLConfig.SelectSingleNode("/Configs/WebServer/Password").InnerText
+                    )
+                {
+                    if ((req.HttpMethod == "GET") && (req.Url.AbsolutePath == "/config")) { result = HTTPResultConfig(); }
+                    if ((req.HttpMethod == "GET") && (req.Url.AbsolutePath == "/start")) { result = HTTPResultStart(req.QueryString["guid"]); }
+                    if ((req.HttpMethod == "GET") && (req.Url.AbsolutePath == "/stop")) { result = HTTPResultStop(req.QueryString["guid"]); }
+                }
+                else
+                {
+                    result[0] = "text/html";
+                    result[1] = "<!DOCTYPE><html><head><title>Gameserver Control</title></head><body>Access denied</body></html>";
+                    resp.AddHeader("WWW-Authenticate", "Basic realm=\"Gameserver Control\"");
+                    resp.StatusCode = 401;
+                }
 
                 // Write the response info
                 byte[] data = Encoding.UTF8.GetBytes(String.Format(result[1]));
@@ -597,7 +640,11 @@ namespace GameserverControl
 
         private string[] HTTPResultConfig()
         {
-            string[] result = { "application/xml", GCXMLConfig.OuterXml };
+            XmlDocument GCXMLResultConfig = (XmlDocument) GCXMLConfig.Clone();
+            GCXMLResultConfig.SelectSingleNode("/Configs/WebServer/Login").InnerText = "***************";
+            GCXMLResultConfig.SelectSingleNode("/Configs/WebServer/Password").InnerText = "***************";
+            string[] result = { "application/xml", GCXMLResultConfig.OuterXml };
+            GCXMLResultConfig = null;
             return result;
         }
 

@@ -53,12 +53,17 @@ namespace GCSetComputerSettings
 
             InitializeComponent();
 
-            this.txtPort.TextChanged -= new System.EventHandler(this.txtPort_TextChanged);
             this.txtPort.Text = WebServerXMLNode.SelectSingleNode("./Port").InnerText;
-            this.txtPort.TextChanged += new System.EventHandler(this.txtPort_TextChanged);
+            this.txtPort.TextChanged += new System.EventHandler(this.txtConfig_TextChanged);
+
+            this.txtLogin.Text = WebServerXMLNode.SelectSingleNode("./Login").InnerText;
+            this.txtLogin.TextChanged += new System.EventHandler(this.txtConfig_TextChanged);
+
+            this.txtPassword.Text = WebServerXMLNode.SelectSingleNode("./Password").InnerText;
+            this.txtPassword.TextChanged += new System.EventHandler(this.txtConfig_TextChanged);
         }
 
-        private void txtPort_TextChanged(object sender, EventArgs e)
+        private void txtConfig_TextChanged(object sender, EventArgs e)
         {
             butSave.Enabled = true;
             butGetListenPort.Enabled = false;
@@ -137,11 +142,26 @@ namespace GCSetComputerSettings
         private XmlNode XMLCreateOrUpdateWebServerConfig(XmlNode WebServerConfig)
         {
             XmlNode tmpNode;
+            // Port Node
             tmpNode = WebServerConfig.SelectSingleNode("./Port");
             if (tmpNode == null)
             {
                 tmpNode = WebServerConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "Port", null));
                 tmpNode.InnerText = "8008";
+            }
+            // Login Node
+            tmpNode = WebServerConfig.SelectSingleNode("./Login");
+            if (tmpNode == null)
+            {
+                tmpNode = WebServerConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "Login", null));
+                tmpNode.InnerText = "admin";
+            }
+            // Password Node
+            tmpNode = WebServerConfig.SelectSingleNode("./Password");
+            if (tmpNode == null)
+            {
+                tmpNode = WebServerConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "Password", null));
+                tmpNode.InnerText = "admin";
             }
             return WebServerConfig;
         }
