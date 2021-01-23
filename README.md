@@ -28,7 +28,7 @@ GameserverControl is the first one, I will create another GitHub repos for the s
   - Start/Stop game server
 
 * From the GCSetComputerSettings
-  - Change web service port, login and password
+  - Change web service port
   - Configure Windows ACL and Firewall for you with netsh
 
 ## What's next:
@@ -39,6 +39,7 @@ GameserverControl is the first one, I will create another GitHub repos for the s
 
 And maybe:
 - Implement SSL web service
+- Implement authenticated web service
 
 ## What support can i give you:
 - None, do it yourself :grin:
