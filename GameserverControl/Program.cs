@@ -6,6 +6,7 @@ using System.IO.Compression;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
@@ -24,6 +25,36 @@ namespace GameserverControl
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new GCApplicationContext());
         }
+    }
+
+    internal class HTTPResult
+    {
+        public int StatusCode { get; set; }
+        public string ContentType { get; set; }
+        public string Content { get; set; }
+
+        public HTTPResult(string content)
+        {
+            StatusCode = 200;
+            ContentType = "text/html";
+            Content = content;
+        }
+
+        public HTTPResult(string contentType, string content)
+        {
+            StatusCode = 200;
+            ContentType = contentType;
+            Content = content;
+        }
+
+        public HTTPResult(int statusCode, string contentType, string content)
+        {
+            StatusCode = statusCode;
+            ContentType = contentType;
+            Content = content;
+        }
+
+        public override string ToString() => StatusCode.ToString() + ", " + ContentType + ", " + Content;
     }
 
     public class GCApplicationContext : ApplicationContext
@@ -347,7 +378,7 @@ namespace GameserverControl
 
         private void MenuAbout_Click(object sender, EventArgs e)
         {
-            AboutBox GameConfigForm = new AboutBox();
+            AboutBox GameConfigForm = new AboutBox(WebServerXMLNode.SelectSingleNode("./Port").InnerText);
             GameConfigForm.ShowDialog();
         }
          
@@ -406,6 +437,27 @@ namespace GameserverControl
             {
                 ToolStripMenuItem senderToolStripMenuItem = (ToolStripMenuItem)GamesToolStripMenuItem.DropDownItems[gameGUID];
                 senderToolStripMenuItem.DropDownItems[menuName].Enabled = enabled;
+            }
+        }
+
+        private string[] ProcessStatus(XmlNode GameXMLNode)
+        {
+            if (GameXMLNode == null)
+            {
+                string[] result = { "This game does not exist", "Game not found" };
+                return result;
+            }
+
+            string gameGUID = GameXMLNode.Attributes["guid"].Value;
+            if (GameProcess.ContainsKey(gameGUID))
+            {
+                string[] result = { "This game is started", "Started" };
+                return result;
+            }
+            else
+            {
+                string[] result = { "This game is stopped", "Stopped" };
+                return result;
             }
         }
 
@@ -608,29 +660,40 @@ namespace GameserverControl
                 }
 
                 // Reply
-                string[] result = { "text/html", "<!DOCTYPE><html><head><title>Gameserver Control</title></head><body></body></html>" };
+                HTTPResult result;
                 if (
                     username == GCXMLConfig.SelectSingleNode("/Configs/WebServer/Login").InnerText &&
                     password == GCXMLConfig.SelectSingleNode("/Configs/WebServer/Password").InnerText
                     )
                 {
-                    if ((req.HttpMethod == "GET") && (req.Url.AbsolutePath == "/config")) { result = HTTPResultConfig(); }
-                    if ((req.HttpMethod == "GET") && (req.Url.AbsolutePath == "/start")) { result = HTTPResultStart(req.QueryString["guid"]); }
-                    if ((req.HttpMethod == "GET") && (req.Url.AbsolutePath == "/stop")) { result = HTTPResultStop(req.QueryString["guid"]); }
+                    result = new HTTPResult(404, "text/html", "<!DOCTYPE><html><head><title>Gameserver Control</title></head><body>Not found</body></html>");
+                    if ((req.HttpMethod == "GET") && (req.Url.AbsolutePath == "/api/v1/config")) { result = HTTPResultConfig(); }
+                    Match GameUriMatch = Regex.Match(req.Url.AbsolutePath, "/api/v1/game/(?<guid>[{(]?[0-9A-F]{8}[-]?(?:[0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?)/(?<action>status|start|stop)", RegexOptions.IgnoreCase);
+                    if (GameUriMatch.Success == true )
+                    {
+                        if (req.HttpMethod == "GET")
+                        {
+                            if (GameUriMatch.Groups["action"].Value == "status") { result = HTTPResultGameStatus(GameUriMatch.Groups["guid"].Value); }
+                        }
+                        if (req.HttpMethod == "POST")
+                        {
+                            if (GameUriMatch.Groups["action"].Value == "start") { result = HTTPResultGameStart(GameUriMatch.Groups["guid"].Value); }
+                            if (GameUriMatch.Groups["action"].Value == "stop") { result = HTTPResultGameStop(GameUriMatch.Groups["guid"].Value); }
+                        }
+                    }
                 }
                 else
                 {
-                    result[0] = "text/html";
-                    result[1] = "<!DOCTYPE><html><head><title>Gameserver Control</title></head><body>Access denied</body></html>";
+                    result = new HTTPResult(401, "text/html", "<!DOCTYPE><html><head><title>Gameserver Control</title></head><body>Access denied</body></html>");
                     resp.AddHeader("WWW-Authenticate", "Basic realm=\"Gameserver Control\"");
-                    resp.StatusCode = 401;
                 }
 
                 // Write the response info
-                byte[] data = Encoding.UTF8.GetBytes(String.Format(result[1]));
-                resp.ContentType = result[0];
+                byte[] data = Encoding.UTF8.GetBytes(String.Format(result.Content));
+                resp.ContentType = result.ContentType;
                 resp.ContentEncoding = Encoding.UTF8;
                 resp.ContentLength64 = data.LongLength;
+                resp.StatusCode = result.StatusCode;
 
                 // Write out to the response stream (asynchronously), then close it
                 await resp.OutputStream.WriteAsync(data, 0, data.Length);
@@ -638,22 +701,23 @@ namespace GameserverControl
             }
         }
 
-        private string[] HTTPResultConfig()
+        private HTTPResult HTTPResultConfig()
         {
             XmlDocument GCXMLResultConfig = (XmlDocument) GCXMLConfig.Clone();
             GCXMLResultConfig.SelectSingleNode("/Configs/WebServer/Login").InnerText = "***************";
             GCXMLResultConfig.SelectSingleNode("/Configs/WebServer/Password").InnerText = "***************";
-            string[] result = { "application/xml", GCXMLResultConfig.OuterXml };
+            HTTPResult result = new HTTPResult("application/xml", GCXMLResultConfig.OuterXml);
             GCXMLResultConfig = null;
             return result;
         }
 
-        private string[] HTTPResultStart(string gameGUID)
+        private HTTPResult HTTPResultGameStatus(string gameGUID)
         {
             XmlNode GameXMLNode;
             XmlDocument XMLResult = new XmlDocument();
             XmlNode XMLResultNode = XMLResult.AppendChild(XMLResult.CreateNode(XmlNodeType.Element, "Result", null));
             XmlNode tmpNode;
+            HTTPResult result;
 
             if (gameGUID == null)
             {
@@ -663,6 +727,45 @@ namespace GameserverControl
                 tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Error", null);
                 tmpNode.InnerText = "GUID Not defined";
                 XMLResultNode.AppendChild(tmpNode);
+                result = new HTTPResult(400, "application/xml", XMLResult.OuterXml);
+            }
+            else
+            {
+                GameXMLNode = GamesXMLNode.SelectSingleNode("./Game[@guid='" + gameGUID + "']");
+
+                string[] ctrlReturn = ProcessStatus(GameXMLNode);
+                tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "State", null);
+                tmpNode.InnerText = ctrlReturn[1];
+                XMLResultNode.AppendChild(tmpNode);
+                tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Message", null);
+                tmpNode.InnerText = ctrlReturn[0];
+                XMLResultNode.AppendChild(tmpNode);
+                tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "GUID", null);
+                tmpNode.InnerText = gameGUID;
+                XMLResultNode.AppendChild(tmpNode);
+                result = new HTTPResult(200, "application/xml", XMLResult.OuterXml);
+            }
+
+            return result;
+        }
+
+        private HTTPResult HTTPResultGameStart(string gameGUID)
+        {
+            XmlNode GameXMLNode;
+            XmlDocument XMLResult = new XmlDocument();
+            XmlNode XMLResultNode = XMLResult.AppendChild(XMLResult.CreateNode(XmlNodeType.Element, "Result", null));
+            XmlNode tmpNode;
+            HTTPResult result;
+
+            if (gameGUID == null)
+            {
+                tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "State", null);
+                tmpNode.InnerText = "Error";
+                XMLResultNode.AppendChild(tmpNode);
+                tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Error", null);
+                tmpNode.InnerText = "GUID Not defined";
+                XMLResultNode.AppendChild(tmpNode);
+                result = new HTTPResult(400, "application/xml", XMLResult.OuterXml);
             }
             else
             {
@@ -677,6 +780,7 @@ namespace GameserverControl
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Error", null);
                     tmpNode.InnerText = ctrlReturn[0];
                     XMLResultNode.AppendChild(tmpNode);
+                    result = new HTTPResult(409, "application/xml", XMLResult.OuterXml);
                 } 
                 else
                 {
@@ -688,19 +792,20 @@ namespace GameserverControl
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "GUID", null);
                     tmpNode.InnerText = gameGUID;
                     XMLResultNode.AppendChild(tmpNode);
+                    result = new HTTPResult(202, "application/xml", XMLResult.OuterXml);
                 }
             }
 
-            string[] result = { "application/xml", XMLResult.OuterXml };
             return result;
         }
 
-        private string[] HTTPResultStop(string gameGUID)
+        private HTTPResult HTTPResultGameStop(string gameGUID)
         {
             XmlNode GameXMLNode;
             XmlDocument XMLResult = new XmlDocument();
             XmlNode XMLResultNode = XMLResult.AppendChild(XMLResult.CreateNode(XmlNodeType.Element, "Result", null));
             XmlNode tmpNode;
+            HTTPResult result;
 
             if (gameGUID == null)
             {
@@ -710,6 +815,7 @@ namespace GameserverControl
                 tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Error", null);
                 tmpNode.InnerText = "GUID Not defined";
                 XMLResultNode.AppendChild(tmpNode);
+                result = new HTTPResult(400, "application/xml", XMLResult.OuterXml);
             }
             else
             {
@@ -724,6 +830,7 @@ namespace GameserverControl
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Error", null);
                     tmpNode.InnerText = ctrlReturn[0];
                     XMLResultNode.AppendChild(tmpNode);
+                    result = new HTTPResult(409, "application/xml", XMLResult.OuterXml);
                 }
                 else
                 {
@@ -734,10 +841,10 @@ namespace GameserverControl
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "GUID", null);
                     tmpNode.InnerText = gameGUID;
                     XMLResultNode.AppendChild(tmpNode);
+                    result = new HTTPResult(202, "application/xml", XMLResult.OuterXml);
                 }
             }
 
-            string[] result = { "application/xml", XMLResult.OuterXml };
             return result;
         }
     }

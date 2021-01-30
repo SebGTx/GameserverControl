@@ -11,14 +11,15 @@ namespace GameserverControl
 {
     partial class AboutBox : Form
     {
-        public AboutBox()
+        public AboutBox(string WSPort)
         {
             InitializeComponent();
-            this.Text = String.Format("À propos de {0}", AssemblyTitle);
+            this.Text = String.Format("About {0}", AssemblyTitle);
             this.labelProductName.Text = AssemblyProduct;
             this.labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
             this.labelCopyright.Text = AssemblyCopyright;
             this.labelCompanyName.Text = AssemblyCompany;
+            this.linkLabelWebService.Text = String.Format("http://localhost:{0}/api/v1/config", WSPort);
             this.textBoxDescription.Text = AssemblyDescription;
         }
 
