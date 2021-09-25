@@ -268,6 +268,7 @@ namespace GameserverControl
             if (newGameConfig.SelectSingleNode("./Program") == null) { newGameConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "Program", null)); }
             if (newGameConfig.SelectSingleNode("./Args") == null) { newGameConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "Args", null)); }
             if (newGameConfig.SelectSingleNode("./WorkingDir") == null) { newGameConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "WorkingDir", null)); }
+            if (newGameConfig.SelectSingleNode("./BeforeStart") == null) { newGameConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "BeforeStart", null)); }
             if (newGameConfig.SelectSingleNode("./Logs") == null) { newGameConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "Logs", null)); }
             if (newGameConfig.SelectSingleNode("./Backup") == null) { newGameConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "Backup", null)); }
             if (newGameConfig.SelectSingleNode("./BackupDir") == null) { newGameConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "BackupDir", null)); }
@@ -343,6 +344,7 @@ namespace GameserverControl
                 GameConfigForm.Controls["tlpGlobal"].Controls["tlpProgram"].Controls["txtProgram"].Text = GameXMLNode.SelectSingleNode("./Program").InnerText;
                 GameConfigForm.Controls["tlpGlobal"].Controls["txtArgs"].Text = GameXMLNode.SelectSingleNode("./Args").InnerText;
                 GameConfigForm.Controls["tlpGlobal"].Controls["tlpWorkingDir"].Controls["txtWorkingDir"].Text = GameXMLNode.SelectSingleNode("./WorkingDir").InnerText;
+                GameConfigForm.Controls["tlpGlobal"].Controls["tlpBeforeStart"].Controls["txtBeforeStart"].Text = GameXMLNode.SelectSingleNode("./BeforeStart").InnerText;
                 GameConfigForm.Controls["tlpGlobal"].Controls["tlpLogs"].Controls["txtLogs"].Text = GameXMLNode.SelectSingleNode("./Logs").InnerText;
                 if (GameXMLNode.SelectSingleNode("./Backup").HasChildNodes)
                 {
@@ -488,6 +490,7 @@ namespace GameserverControl
         private Process ProcessStart(XmlNode GameXMLNode)
         {
             string gameGUID = GameXMLNode.Attributes["guid"].Value;
+            string programBeforeStart = GameXMLNode.SelectSingleNode("./BeforeStart").InnerText;
             string programToStart = GameXMLNode.SelectSingleNode("./Program").InnerText;
 
             // Systray menu management
@@ -497,8 +500,28 @@ namespace GameserverControl
             ProcessEnableDisableToolStripMenuItem(gameGUID, "edit", false);
             ProcessEnableDisableToolStripMenuItem(gameGUID, "remove", false);
 
+            ProcessStartInfo startInfo;
+            Process process;
+
+            // Before Start Process
+            if (programBeforeStart.Length >= 1) {
+                startInfo = new ProcessStartInfo();
+                startInfo.EnvironmentVariables.Add("GameGUID", gameGUID);
+                startInfo.WindowStyle = ProcessWindowStyle.Normal;
+                startInfo.UseShellExecute = false;
+                startInfo.FileName = programBeforeStart;
+                if (Directory.Exists(GameXMLNode.SelectSingleNode("./WorkingDir").InnerText))
+                {
+                    startInfo.WorkingDirectory = GameXMLNode.SelectSingleNode("./WorkingDir").InnerText;
+                }
+                process = new Process();
+                process.StartInfo = startInfo;
+                process.Start();
+                process.WaitForExit();
+            }
+
             // Process start
-            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo = new ProcessStartInfo();
             startInfo.EnvironmentVariables.Add("GameGUID", gameGUID);
             startInfo.WindowStyle = ProcessWindowStyle.Normal;
             startInfo.UseShellExecute = false;
@@ -512,7 +535,7 @@ namespace GameserverControl
                 startInfo.Arguments = GameXMLNode.SelectSingleNode("./Args").InnerText;
             }
 
-            Process process = new Process();
+            process = new Process();
             process.StartInfo = startInfo;
             process.EnableRaisingEvents = true;
             process.Exited += new EventHandler(ProcessExited);

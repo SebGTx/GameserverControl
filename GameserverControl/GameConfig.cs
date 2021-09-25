@@ -79,6 +79,11 @@ namespace GameserverControl
             txtProgram.Text = ChooseFile(txtProgram, "Program (*.exe;*.com;*.bat;*.cmd)|*.exe;*.com;*.bat;*.cmd|All files (*.*)|*.*");
         }
 
+        private void butBeforeStart_Click(object sender, EventArgs e)
+        {
+            txtBeforeStart.Text = ChooseFile(txtBeforeStart, "Program (*.exe;*.com;*.bat;*.cmd)|*.exe;*.com;*.bat;*.cmd|All files (*.*)|*.*");
+        }
+
         private void butWorkingDir_Click(object sender, EventArgs e)
         {
             string ActualWorkingDir = txtWorkingDir.Text;
@@ -193,6 +198,7 @@ namespace GameserverControl
                 newGameConfig.SelectSingleNode("./Program").InnerText = txtProgram.Text;
                 newGameConfig.SelectSingleNode("./Args").InnerText = txtArgs.Text;
                 newGameConfig.SelectSingleNode("./WorkingDir").InnerText = txtWorkingDir.Text;
+                newGameConfig.SelectSingleNode("./BeforeStart").InnerText = txtBeforeStart.Text;
                 newGameConfig.SelectSingleNode("./Logs").InnerText = txtLogs.Text;
                 newGameConfig.SelectSingleNode("./BackupDir").InnerText = txtBackupDir.Text;
                 if (newGame)

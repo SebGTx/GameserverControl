@@ -34,6 +34,10 @@ namespace GameserverControl
             this.txtGUID = new System.Windows.Forms.TextBox();
             this.lblName = new System.Windows.Forms.Label();
             this.tlpGlobal = new System.Windows.Forms.TableLayoutPanel();
+            this.tlpBeforeStart = new System.Windows.Forms.TableLayoutPanel();
+            this.butBeforeStart = new System.Windows.Forms.Button();
+            this.txtBeforeStart = new System.Windows.Forms.TextBox();
+            this.lblBeforeStart = new System.Windows.Forms.Label();
             this.lblWorkingDir = new System.Windows.Forms.Label();
             this.lblLogs = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
@@ -65,6 +69,7 @@ namespace GameserverControl
             this.openFileDialogCtrl = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialogCtrl = new System.Windows.Forms.FolderBrowserDialog();
             this.tlpGlobal.SuspendLayout();
+            this.tlpBeforeStart.SuspendLayout();
             this.tlpProgram.SuspendLayout();
             this.tlpLogs.SuspendLayout();
             this.tlpButtons.SuspendLayout();
@@ -109,8 +114,10 @@ namespace GameserverControl
             // 
             this.tlpGlobal.ColumnCount = 1;
             this.tlpGlobal.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpGlobal.Controls.Add(this.tlpBeforeStart, 0, 11);
+            this.tlpGlobal.Controls.Add(this.lblBeforeStart, 0, 10);
             this.tlpGlobal.Controls.Add(this.lblWorkingDir, 0, 8);
-            this.tlpGlobal.Controls.Add(this.lblLogs, 0, 10);
+            this.tlpGlobal.Controls.Add(this.lblLogs, 0, 12);
             this.tlpGlobal.Controls.Add(this.lblGUID, 0, 0);
             this.tlpGlobal.Controls.Add(this.txtGUID, 0, 1);
             this.tlpGlobal.Controls.Add(this.lblName, 0, 2);
@@ -119,17 +126,19 @@ namespace GameserverControl
             this.tlpGlobal.Controls.Add(this.tlpProgram, 0, 5);
             this.tlpGlobal.Controls.Add(this.lblArgs, 0, 6);
             this.tlpGlobal.Controls.Add(this.txtArgs, 0, 7);
-            this.tlpGlobal.Controls.Add(this.tlpLogs, 0, 11);
-            this.tlpGlobal.Controls.Add(this.tlpButtons, 0, 16);
+            this.tlpGlobal.Controls.Add(this.tlpLogs, 0, 13);
+            this.tlpGlobal.Controls.Add(this.tlpButtons, 0, 18);
             this.tlpGlobal.Controls.Add(this.tlpWorkingDir, 0, 9);
-            this.tlpGlobal.Controls.Add(this.lblBackup, 0, 12);
-            this.tlpGlobal.Controls.Add(this.tlpBackup, 0, 13);
-            this.tlpGlobal.Controls.Add(this.lblBackupDir, 0, 14);
-            this.tlpGlobal.Controls.Add(this.tlpBackupDir, 0, 15);
+            this.tlpGlobal.Controls.Add(this.lblBackup, 0, 14);
+            this.tlpGlobal.Controls.Add(this.tlpBackup, 0, 15);
+            this.tlpGlobal.Controls.Add(this.lblBackupDir, 0, 16);
+            this.tlpGlobal.Controls.Add(this.tlpBackupDir, 0, 17);
             this.tlpGlobal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpGlobal.Location = new System.Drawing.Point(5, 5);
             this.tlpGlobal.Name = "tlpGlobal";
-            this.tlpGlobal.RowCount = 17;
+            this.tlpGlobal.RowCount = 19;
+            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -147,8 +156,56 @@ namespace GameserverControl
             this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpGlobal.Size = new System.Drawing.Size(574, 556);
+            this.tlpGlobal.Size = new System.Drawing.Size(574, 606);
             this.tlpGlobal.TabIndex = 0;
+            // 
+            // tlpBeforeStart
+            // 
+            this.tlpBeforeStart.AutoSize = true;
+            this.tlpBeforeStart.ColumnCount = 2;
+            this.tlpBeforeStart.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpBeforeStart.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tlpBeforeStart.Controls.Add(this.butBeforeStart, 0, 0);
+            this.tlpBeforeStart.Controls.Add(this.txtBeforeStart, 0, 0);
+            this.tlpBeforeStart.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tlpBeforeStart.Location = new System.Drawing.Point(3, 266);
+            this.tlpBeforeStart.Name = "tlpBeforeStart";
+            this.tlpBeforeStart.RowCount = 1;
+            this.tlpBeforeStart.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tlpBeforeStart.Size = new System.Drawing.Size(568, 20);
+            this.tlpBeforeStart.TabIndex = 18;
+            // 
+            // butBeforeStart
+            // 
+            this.butBeforeStart.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.butBeforeStart.Location = new System.Drawing.Point(543, 0);
+            this.butBeforeStart.Margin = new System.Windows.Forms.Padding(0);
+            this.butBeforeStart.Name = "butBeforeStart";
+            this.butBeforeStart.Size = new System.Drawing.Size(25, 20);
+            this.butBeforeStart.TabIndex = 2;
+            this.butBeforeStart.Text = "...";
+            this.butBeforeStart.UseVisualStyleBackColor = true;
+            this.butBeforeStart.Click += new System.EventHandler(this.butBeforeStart_Click);
+            // 
+            // txtBeforeStart
+            // 
+            this.txtBeforeStart.Dock = System.Windows.Forms.DockStyle.Top;
+            this.txtBeforeStart.Location = new System.Drawing.Point(0, 0);
+            this.txtBeforeStart.Margin = new System.Windows.Forms.Padding(0);
+            this.txtBeforeStart.Name = "txtBeforeStart";
+            this.txtBeforeStart.Size = new System.Drawing.Size(543, 20);
+            this.txtBeforeStart.TabIndex = 1;
+            // 
+            // lblBeforeStart
+            // 
+            this.lblBeforeStart.AutoSize = true;
+            this.lblBeforeStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblBeforeStart.Location = new System.Drawing.Point(3, 240);
+            this.lblBeforeStart.Name = "lblBeforeStart";
+            this.lblBeforeStart.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
+            this.lblBeforeStart.Size = new System.Drawing.Size(73, 23);
+            this.lblBeforeStart.TabIndex = 17;
+            this.lblBeforeStart.Text = "Before start";
             // 
             // lblWorkingDir
             // 
@@ -165,7 +222,7 @@ namespace GameserverControl
             // 
             this.lblLogs.AutoSize = true;
             this.lblLogs.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLogs.Location = new System.Drawing.Point(3, 240);
+            this.lblLogs.Location = new System.Drawing.Point(3, 289);
             this.lblLogs.Name = "lblLogs";
             this.lblLogs.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
             this.lblLogs.Size = new System.Drawing.Size(34, 23);
@@ -257,7 +314,7 @@ namespace GameserverControl
             this.tlpLogs.Controls.Add(this.txtLogs, 0, 0);
             this.tlpLogs.Controls.Add(this.butLogs, 1, 0);
             this.tlpLogs.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tlpLogs.Location = new System.Drawing.Point(3, 266);
+            this.tlpLogs.Location = new System.Drawing.Point(3, 315);
             this.tlpLogs.Name = "tlpLogs";
             this.tlpLogs.RowCount = 1;
             this.tlpLogs.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -293,12 +350,12 @@ namespace GameserverControl
             this.tlpButtons.Controls.Add(this.butSave, 0, 0);
             this.tlpButtons.Controls.Add(this.butCancel, 1, 0);
             this.tlpButtons.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpButtons.Location = new System.Drawing.Point(3, 513);
+            this.tlpButtons.Location = new System.Drawing.Point(3, 562);
             this.tlpButtons.Name = "tlpButtons";
             this.tlpButtons.RowCount = 1;
             this.tlpButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpButtons.Size = new System.Drawing.Size(568, 40);
+            this.tlpButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 41F));
+            this.tlpButtons.Size = new System.Drawing.Size(568, 41);
             this.tlpButtons.TabIndex = 10;
             // 
             // butSave
@@ -307,7 +364,7 @@ namespace GameserverControl
             this.butSave.Location = new System.Drawing.Point(0, 0);
             this.butSave.Margin = new System.Windows.Forms.Padding(0);
             this.butSave.Name = "butSave";
-            this.butSave.Size = new System.Drawing.Size(284, 40);
+            this.butSave.Size = new System.Drawing.Size(284, 41);
             this.butSave.TabIndex = 0;
             this.butSave.Text = "Save";
             this.butSave.UseVisualStyleBackColor = true;
@@ -319,7 +376,7 @@ namespace GameserverControl
             this.butCancel.Location = new System.Drawing.Point(284, 0);
             this.butCancel.Margin = new System.Windows.Forms.Padding(0);
             this.butCancel.Name = "butCancel";
-            this.butCancel.Size = new System.Drawing.Size(284, 40);
+            this.butCancel.Size = new System.Drawing.Size(284, 41);
             this.butCancel.TabIndex = 1;
             this.butCancel.Text = "Cancel";
             this.butCancel.UseVisualStyleBackColor = true;
@@ -366,7 +423,7 @@ namespace GameserverControl
             // 
             this.lblBackup.AutoSize = true;
             this.lblBackup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblBackup.Location = new System.Drawing.Point(3, 289);
+            this.lblBackup.Location = new System.Drawing.Point(3, 338);
             this.lblBackup.Name = "lblBackup";
             this.lblBackup.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
             this.lblBackup.Size = new System.Drawing.Size(161, 23);
@@ -383,7 +440,7 @@ namespace GameserverControl
             this.tlpBackup.Controls.Add(this.butBackupAddFolder, 1, 1);
             this.tlpBackup.Controls.Add(this.butBackupRemove, 1, 2);
             this.tlpBackup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpBackup.Location = new System.Drawing.Point(3, 315);
+            this.tlpBackup.Location = new System.Drawing.Point(3, 364);
             this.tlpBackup.Name = "tlpBackup";
             this.tlpBackup.RowCount = 3;
             this.tlpBackup.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
@@ -446,7 +503,7 @@ namespace GameserverControl
             // 
             this.lblBackupDir.AutoSize = true;
             this.lblBackupDir.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblBackupDir.Location = new System.Drawing.Point(3, 467);
+            this.lblBackupDir.Location = new System.Drawing.Point(3, 516);
             this.lblBackupDir.Margin = new System.Windows.Forms.Padding(3, 5, 3, 4);
             this.lblBackupDir.Name = "lblBackupDir";
             this.lblBackupDir.Size = new System.Drawing.Size(103, 13);
@@ -462,7 +519,7 @@ namespace GameserverControl
             this.tlpBackupDir.Controls.Add(this.butBackupDir, 1, 0);
             this.tlpBackupDir.Controls.Add(this.txtBackupDir, 0, 0);
             this.tlpBackupDir.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tlpBackupDir.Location = new System.Drawing.Point(3, 487);
+            this.tlpBackupDir.Location = new System.Drawing.Point(3, 536);
             this.tlpBackupDir.Name = "tlpBackupDir";
             this.tlpBackupDir.RowCount = 1;
             this.tlpBackupDir.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -498,7 +555,7 @@ namespace GameserverControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(584, 566);
+            this.ClientSize = new System.Drawing.Size(584, 616);
             this.Controls.Add(this.tlpGlobal);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -510,6 +567,8 @@ namespace GameserverControl
             this.Text = "Game configuration";
             this.tlpGlobal.ResumeLayout(false);
             this.tlpGlobal.PerformLayout();
+            this.tlpBeforeStart.ResumeLayout(false);
+            this.tlpBeforeStart.PerformLayout();
             this.tlpProgram.ResumeLayout(false);
             this.tlpProgram.PerformLayout();
             this.tlpLogs.ResumeLayout(false);
@@ -560,6 +619,10 @@ namespace GameserverControl
         private System.Windows.Forms.TableLayoutPanel tlpBackupDir;
         private System.Windows.Forms.Button butBackupDir;
         private System.Windows.Forms.TextBox txtBackupDir;
+        private System.Windows.Forms.TableLayoutPanel tlpBeforeStart;
+        private System.Windows.Forms.Button butBeforeStart;
+        private System.Windows.Forms.TextBox txtBeforeStart;
+        private System.Windows.Forms.Label lblBeforeStart;
     }
 }
 
