@@ -19,7 +19,7 @@ namespace GameserverControl
             this.labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
             this.labelCopyright.Text = AssemblyCopyright;
             this.labelCompanyName.Text = AssemblyCompany;
-            this.linkLabelWebService.Text = String.Format("http://localhost:{0}/api/v1/config", WSPort);
+            this.linkLabelWebService.Text = String.Format("http://localhost:{0}/api/v1/games", WSPort);
             this.textBoxDescription.Text = AssemblyDescription;
         }
 
