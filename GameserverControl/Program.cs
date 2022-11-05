@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using System.Management;
 
 namespace GameserverControl
 {
@@ -165,6 +166,34 @@ namespace GameserverControl
             catch (HttpListenerException e)
             {
                 MessageBox.Show("Unable to listen on port " + WebServerXMLNode.SelectSingleNode("./Port").InnerText + "\rYou can't control GameserverControl from another computer\r\rTry to correct this with GCSetComputerSettings and restart GameserverControl\r\rError message :\r" + e.Message, "Can't start webserver on specified port", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // *********************************************************
+        // System functions
+        public void SystemShutdownOrReboot(bool reboot)
+        {
+            ManagementBaseObject mboShutdown = null;
+            ManagementClass mcWin32 = new ManagementClass("Win32_OperatingSystem");
+            mcWin32.Get();
+
+            // You can't shutdown without security privileges
+            mcWin32.Scope.Options.EnablePrivileges = true;
+            ManagementBaseObject mboShutdownParams = mcWin32.GetMethodParameters("Win32Shutdown");
+
+            // Flag 1 means we want to shut down the system. Use "2" to reboot.
+            if (reboot)
+            {
+                mboShutdownParams["Flags"] = "2";
+            }
+            else
+            {
+                mboShutdownParams["Flags"] = "1";
+            }
+            mboShutdownParams["Reserved"] = "0";
+            foreach (ManagementObject manObj in mcWin32.GetInstances())
+            {
+                mboShutdown = manObj.InvokeMethod("Win32Shutdown", mboShutdownParams, null);
             }
         }
 
@@ -446,19 +475,19 @@ namespace GameserverControl
         {
             if (GameXMLNode == null)
             {
-                string[] result = { "This game does not exist", "Game not found" };
+                string[] result = { "This game does not exist", "Game not found", "404" };
                 return result;
             }
 
             string gameGUID = GameXMLNode.Attributes["guid"].Value;
             if (GameProcess.ContainsKey(gameGUID))
             {
-                string[] result = { "This game is started", "Started" };
+                string[] result = { "This game is started", "Started", "200" };
                 return result;
             }
             else
             {
-                string[] result = { "This game is stopped", "Stopped" };
+                string[] result = { "This game is stopped", "Stopped", "200" };
                 return result;
             }
         }
@@ -467,20 +496,20 @@ namespace GameserverControl
         {
             if (GameXMLNode == null)
             {
-                string[] result = { "This game does not exist", "Game not found" };
+                string[] result = { "This game does not exist", "Game not found", "404" };
                 return result;
             }
 
             string gameGUID = GameXMLNode.Attributes["guid"].Value;
             if (GameProcess.ContainsKey(gameGUID))
             {
-                string[] result = { "This game is already started", "Already started" };
+                string[] result = { "This game is already started", "Already started", "409" };
                 return result;
             }
 
             if (!File.Exists(GameXMLNode.SelectSingleNode("./Program").InnerText))
             {
-                string[] result = { "The program specified was not found", "Program not found" };
+                string[] result = { "The program specified was not found", "Program not found", "404" };
                 return result;
             }
 
@@ -553,14 +582,14 @@ namespace GameserverControl
 
             if (GameXMLNode == null)
             {
-                string[] result = { "This game does not exist", "Game not found" };
+                string[] result = { "This game does not exist", "Game not found", "404" };
                 return result;
             }
 
             string gameGUID = GameXMLNode.Attributes["guid"].Value;
             if (!GameProcess.ContainsKey(gameGUID))
             {
-                string[] result = { "This game is not started", "Not started" };
+                string[] result = { "This game is not started", "Not started", "405" };
                 return result;
             }
 
@@ -684,18 +713,38 @@ namespace GameserverControl
 
                 // Reply
                 HTTPResult result;
+                Match GameUriMatch;
                 if (
                     username == GCXMLConfig.SelectSingleNode("/Configs/WebServer/Login").InnerText &&
                     password == GCXMLConfig.SelectSingleNode("/Configs/WebServer/Password").InnerText
                     )
                 {
                     result = new HTTPResult(404, "text/html", "<!DOCTYPE><html><head><title>Gameserver Control</title></head><body>Not found</body></html>");
-                    if ((req.HttpMethod == "GET") && (req.Url.AbsolutePath == "/api/v1/config")) { result = HTTPResultConfig(); }
-                    Match GameUriMatch = Regex.Match(req.Url.AbsolutePath, "/api/v1/game/(?<guid>[{(]?[0-9A-F]{8}[-]?(?:[0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?)/(?<action>status|start|stop)", RegexOptions.IgnoreCase);
+
+                    // URI /api/v1/configs
+                    if ((req.HttpMethod == "GET") && (req.Url.AbsolutePath == "/api/v1/configs")) { result = HTTPResultConfigs(); }
+
+                    // URI /api/v1/servers/*
+                    GameUriMatch = Regex.Match(req.Url.AbsolutePath, "/api/v1/servers/(?<action>shutdown|reboot)", RegexOptions.IgnoreCase);
+                    if (GameUriMatch.Success == true)
+                    {
+                        if (req.HttpMethod == "POST")
+                        {
+                            if (GameUriMatch.Groups["action"].Value == "shutdown") { result = HTTPResultShutdownServer(); }
+                            if (GameUriMatch.Groups["action"].Value == "reboot") { result = HTTPResultRebootServer(); }
+                        }
+                    }
+
+                    // URI /api/v1/games
+                    if ((req.HttpMethod == "GET") && (req.Url.AbsolutePath == "/api/v1/games")) { result = HTTPResultGames(); }
+
+                    // URI /api/v1/games/*
+                    GameUriMatch = Regex.Match(req.Url.AbsolutePath, "/api/v1/games/(?<guid>[{(]?[0-9A-F]{8}[-]?(?:[0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?)/(?<action>configs|status|start|stop)", RegexOptions.IgnoreCase);
                     if (GameUriMatch.Success == true )
                     {
                         if (req.HttpMethod == "GET")
                         {
+                            if (GameUriMatch.Groups["action"].Value == "configs") { result = HTTPResultGameConfigs(GameUriMatch.Groups["guid"].Value); }
                             if (GameUriMatch.Groups["action"].Value == "status") { result = HTTPResultGameStatus(GameUriMatch.Groups["guid"].Value); }
                         }
                         if (req.HttpMethod == "POST")
@@ -724,13 +773,98 @@ namespace GameserverControl
             }
         }
 
-        private HTTPResult HTTPResultConfig()
+        private HTTPResult HTTPResultConfigs()
         {
             XmlDocument GCXMLResultConfig = (XmlDocument) GCXMLConfig.Clone();
             GCXMLResultConfig.SelectSingleNode("/Configs/WebServer/Login").InnerText = "***************";
             GCXMLResultConfig.SelectSingleNode("/Configs/WebServer/Password").InnerText = "***************";
             HTTPResult result = new HTTPResult("application/xml", GCXMLResultConfig.OuterXml);
             GCXMLResultConfig = null;
+            return result;
+        }
+
+        private HTTPResult HTTPResultShutdownServer()
+        {
+            XmlDocument XMLResult = new XmlDocument();
+            XmlNode XMLResultNode = XMLResult.AppendChild(XMLResult.CreateNode(XmlNodeType.Element, "Result", null));
+            XmlNode tmpNode;
+            HTTPResult result;
+
+            tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "State", null);
+            tmpNode.InnerText = "Shutdown";
+            XMLResultNode.AppendChild(tmpNode);
+            tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Message", null);
+            tmpNode.InnerText = "The server will shutdown";
+            result = new HTTPResult(202, "application/xml", XMLResult.OuterXml);
+
+            SystemShutdownOrReboot(false);
+            return result;
+        }
+
+        private HTTPResult HTTPResultRebootServer()
+        {
+            XmlDocument XMLResult = new XmlDocument();
+            XmlNode XMLResultNode = XMLResult.AppendChild(XMLResult.CreateNode(XmlNodeType.Element, "Result", null));
+            XmlNode tmpNode;
+            HTTPResult result;
+
+            tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "State", null);
+            tmpNode.InnerText = "Reboot";
+            XMLResultNode.AppendChild(tmpNode);
+            tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Message", null);
+            tmpNode.InnerText = "The server will reboot";
+            result = new HTTPResult(202, "application/xml", XMLResult.OuterXml);
+
+            SystemShutdownOrReboot(true);
+            return result;
+        }
+
+        private HTTPResult HTTPResultGames()
+        {
+            HTTPResult result = new HTTPResult("application/xml", GamesXMLNode.OuterXml);
+            return result;
+        }
+
+        private HTTPResult HTTPResultGameConfigs(string gameGUID)
+        {
+            XmlNode GameXMLNode;
+            XmlDocument XMLResult = new XmlDocument();
+            XmlNode XMLResultNode = XMLResult.AppendChild(XMLResult.CreateNode(XmlNodeType.Element, "Result", null));
+            XmlNode tmpNode;
+            HTTPResult result;
+
+            if (gameGUID == null)
+            {
+                tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "State", null);
+                tmpNode.InnerText = "Error";
+                XMLResultNode.AppendChild(tmpNode);
+                tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Error", null);
+                tmpNode.InnerText = "GUID Not defined";
+                XMLResultNode.AppendChild(tmpNode);
+                result = new HTTPResult(400, "application/xml", XMLResult.OuterXml);
+            }
+            else
+            {
+                GameXMLNode = GamesXMLNode.SelectSingleNode("./Game[@guid='" + gameGUID + "']");
+                if (GameXMLNode == null)
+                {
+                    tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "State", null);
+                    tmpNode.InnerText = "This game does not exist";
+                    XMLResultNode.AppendChild(tmpNode);
+                    tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Message", null);
+                    tmpNode.InnerText = "Game not found";
+                    XMLResultNode.AppendChild(tmpNode);
+                    tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "GUID", null);
+                    tmpNode.InnerText = gameGUID;
+                    XMLResultNode.AppendChild(tmpNode);
+                    result = new HTTPResult(404, "application/xml", XMLResult.OuterXml);
+                }
+                else
+                {
+                    result = new HTTPResult(200, "application/xml", GameXMLNode.OuterXml);
+                }
+            }
+
             return result;
         }
 
@@ -766,7 +900,7 @@ namespace GameserverControl
                 tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "GUID", null);
                 tmpNode.InnerText = gameGUID;
                 XMLResultNode.AppendChild(tmpNode);
-                result = new HTTPResult(200, "application/xml", XMLResult.OuterXml);
+                result = new HTTPResult(Int32.Parse(ctrlReturn[2]), "application/xml", XMLResult.OuterXml);
             }
 
             return result;
@@ -803,7 +937,7 @@ namespace GameserverControl
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Error", null);
                     tmpNode.InnerText = ctrlReturn[0];
                     XMLResultNode.AppendChild(tmpNode);
-                    result = new HTTPResult(409, "application/xml", XMLResult.OuterXml);
+                    result = new HTTPResult(Int32.Parse(ctrlReturn[2]), "application/xml", XMLResult.OuterXml);
                 } 
                 else
                 {
@@ -853,7 +987,7 @@ namespace GameserverControl
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Error", null);
                     tmpNode.InnerText = ctrlReturn[0];
                     XMLResultNode.AppendChild(tmpNode);
-                    result = new HTTPResult(409, "application/xml", XMLResult.OuterXml);
+                    result = new HTTPResult(Int32.Parse(ctrlReturn[2]), "application/xml", XMLResult.OuterXml);
                 }
                 else
                 {
