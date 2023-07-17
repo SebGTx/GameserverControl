@@ -72,7 +72,9 @@ namespace GameserverControl
         private XmlNode WebServerXMLNode;
         private XmlNode GamesXMLNode;
 
+        private Dictionary<string, Process> BeforeStartGameProcess;
         private Dictionary<string, Process> GameProcess;
+        private Dictionary<string, string> BackupGameProcess;
 
         private HttpListener listener;
         private string url;
@@ -84,8 +86,10 @@ namespace GameserverControl
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             Console.WriteLine(version);
 
-            // Initialize GameProcess dictionnary
+            // Initialize dictionnaries
+            BeforeStartGameProcess = new Dictionary<string, Process> { };
             GameProcess = new Dictionary<string, Process> { };
+            BackupGameProcess = new Dictionary<string, string> { };
 
             // Initialize Tray Icon
             trayIcon = new NotifyIcon()
@@ -324,8 +328,7 @@ namespace GameserverControl
                     return;
                 }
 
-                Process process = ProcessStart(GameXMLNode);
-                GameProcess.Add(gameGUID, process);
+                Task pStart = ProcessStart(GameXMLNode);
             }
         }
 
@@ -346,7 +349,7 @@ namespace GameserverControl
                     return;
                 }
 
-                ProcessStop(GameXMLNode);
+                Task pStop = ProcessStop(GameXMLNode);
             }
         }
 
@@ -485,6 +488,16 @@ namespace GameserverControl
                 string[] result = { "This game is started", "Started", "200" };
                 return result;
             }
+            else if (BeforeStartGameProcess.ContainsKey(gameGUID))
+            {
+                string[] result = { "The before start game process is in progress", "Before start", "200" };
+                return result;
+            }
+            else if (BackupGameProcess.ContainsKey(gameGUID))
+            {
+                string[] result = { "The backup process is in progress, " + BackupGameProcess[gameGUID], "Backup", "200" };
+                return result;
+            }
             else
             {
                 string[] result = { "This game is stopped", "Stopped", "200" };
@@ -516,65 +529,77 @@ namespace GameserverControl
             return null;
         }
 
-        private Process ProcessStart(XmlNode GameXMLNode)
+        private async Task ProcessStart(XmlNode GameXMLNode)
         {
-            string gameGUID = GameXMLNode.Attributes["guid"].Value;
-            string programBeforeStart = GameXMLNode.SelectSingleNode("./BeforeStart").InnerText;
-            string programToStart = GameXMLNode.SelectSingleNode("./Program").InnerText;
+            await Task.Run(() =>
+            {
+                string gameGUID = GameXMLNode.Attributes["guid"].Value;
+                string programBeforeStart = GameXMLNode.SelectSingleNode("./BeforeStart").InnerText;
+                string programToStart = GameXMLNode.SelectSingleNode("./Program").InnerText;
 
-            // Systray menu management
-            ToolStripMenuItem senderToolStripMenuItem = (ToolStripMenuItem)GamesToolStripMenuItem.DropDownItems[gameGUID];
-            senderToolStripMenuItem.Image = Properties.Resources.YellowLightImg;
-            ProcessEnableDisableToolStripMenuItem(gameGUID, "start", false);
-            ProcessEnableDisableToolStripMenuItem(gameGUID, "edit", false);
-            ProcessEnableDisableToolStripMenuItem(gameGUID, "remove", false);
+                // Systray menu management
+                GamesToolStripMenuItem.GetCurrentParent().Invoke(new MethodInvoker(delegate
+                {
+                    ToolStripMenuItem senderToolStripMenuItem = (ToolStripMenuItem)GamesToolStripMenuItem.DropDownItems[gameGUID];
+                    senderToolStripMenuItem.Image = Properties.Resources.YellowLightImg;
+                    ProcessEnableDisableToolStripMenuItem(gameGUID, "start", false);
+                    ProcessEnableDisableToolStripMenuItem(gameGUID, "edit", false);
+                    ProcessEnableDisableToolStripMenuItem(gameGUID, "remove", false);
+                }));
 
-            ProcessStartInfo startInfo;
-            Process process;
+                ProcessStartInfo startInfo;
+                Process process;
 
-            // Before Start Process
-            if (programBeforeStart.Length >= 1) {
+                // Before Start Process
+                if (programBeforeStart.Length >= 1)
+                {
+                    startInfo = new ProcessStartInfo();
+                    startInfo.EnvironmentVariables.Add("GameGUID", gameGUID);
+                    startInfo.WindowStyle = ProcessWindowStyle.Normal;
+                    startInfo.UseShellExecute = false;
+                    startInfo.FileName = programBeforeStart;
+                    if (Directory.Exists(GameXMLNode.SelectSingleNode("./WorkingDir").InnerText))
+                    {
+                        startInfo.WorkingDirectory = GameXMLNode.SelectSingleNode("./WorkingDir").InnerText;
+                    }
+                    process = new Process();
+                    process.StartInfo = startInfo;
+                    process.Start();
+                    BeforeStartGameProcess.Add(gameGUID, process);
+                    process.WaitForExit();
+                    BeforeStartGameProcess.Remove(gameGUID);
+                }
+
+                // Process start
                 startInfo = new ProcessStartInfo();
                 startInfo.EnvironmentVariables.Add("GameGUID", gameGUID);
                 startInfo.WindowStyle = ProcessWindowStyle.Normal;
                 startInfo.UseShellExecute = false;
-                startInfo.FileName = programBeforeStart;
+                startInfo.FileName = programToStart;
                 if (Directory.Exists(GameXMLNode.SelectSingleNode("./WorkingDir").InnerText))
                 {
                     startInfo.WorkingDirectory = GameXMLNode.SelectSingleNode("./WorkingDir").InnerText;
                 }
+                if (GameXMLNode.SelectSingleNode("./Args").InnerText.Length > 0)
+                {
+                    startInfo.Arguments = GameXMLNode.SelectSingleNode("./Args").InnerText;
+                }
+
                 process = new Process();
                 process.StartInfo = startInfo;
+                process.EnableRaisingEvents = true;
+                process.Exited += new EventHandler(ProcessExited);
                 process.Start();
-                process.WaitForExit();
-            }
+                GameProcess.Add(gameGUID, process);
 
-            // Process start
-            startInfo = new ProcessStartInfo();
-            startInfo.EnvironmentVariables.Add("GameGUID", gameGUID);
-            startInfo.WindowStyle = ProcessWindowStyle.Normal;
-            startInfo.UseShellExecute = false;
-            startInfo.FileName = programToStart;
-            if (Directory.Exists(GameXMLNode.SelectSingleNode("./WorkingDir").InnerText))
-            {
-                startInfo.WorkingDirectory = GameXMLNode.SelectSingleNode("./WorkingDir").InnerText;
-            }
-            if (GameXMLNode.SelectSingleNode("./Args").InnerText.Length > 0)
-            {
-                startInfo.Arguments = GameXMLNode.SelectSingleNode("./Args").InnerText;
-            }
-
-            process = new Process();
-            process.StartInfo = startInfo;
-            process.EnableRaisingEvents = true;
-            process.Exited += new EventHandler(ProcessExited);
-            process.Start();
-
-            // Systray menu management
-            senderToolStripMenuItem.Image = Properties.Resources.GreenLightImg;
-            ProcessEnableDisableToolStripMenuItem(gameGUID, "stop", true);
-
-            return process;
+                // Systray menu management
+                GamesToolStripMenuItem.GetCurrentParent().Invoke(new MethodInvoker(delegate
+                {
+                    ToolStripMenuItem senderToolStripMenuItem = (ToolStripMenuItem)GamesToolStripMenuItem.DropDownItems[gameGUID];
+                    senderToolStripMenuItem.Image = Properties.Resources.GreenLightImg;
+                    ProcessEnableDisableToolStripMenuItem(gameGUID, "stop", true);
+                }));
+            });
         }
 
         private string[] ProcessCtrlBeforeStop(XmlNode GameXMLNode)
@@ -596,23 +621,26 @@ namespace GameserverControl
             return null;
         }
 
-        private void ProcessStop(XmlNode GameXMLNode)
+        private async Task ProcessStop(XmlNode GameXMLNode)
         {
-            string gameGUID = GameXMLNode.Attributes["guid"].Value;
-            if (!GameProcess.ContainsKey(gameGUID)) { return; }
-
-            Process process = GameProcess[gameGUID];
-            process.CloseMainWindow();
-            try
+            await Task.Run(() =>
             {
-                for (int i = 1; i < 10; i++)
+                string gameGUID = GameXMLNode.Attributes["guid"].Value;
+                if (!GameProcess.ContainsKey(gameGUID)) { return; }
+
+                Process process = GameProcess[gameGUID];
+                process.CloseMainWindow();
+                try
                 {
-                    System.Threading.Thread.Sleep(1000);
-                    if (process.HasExited) break;
+                    for (int i = 1; i < 10; i++)
+                    {
+                        System.Threading.Thread.Sleep(1000);
+                        if (process.HasExited) break;
+                    }
+                    if (!process.HasExited) { process.Kill(); }
                 }
-                if (!process.HasExited) { process.Kill(); }
-            }
-            catch { }
+                catch { }
+            });
         }
 
         private void ProcessExited(object sender, System.EventArgs e)
@@ -643,11 +671,13 @@ namespace GameserverControl
             XmlNode GameBackup = GameXMLNode.SelectSingleNode("Backup");
             if ((backupDir.Trim().Length > 0) && (GameBackup.HasChildNodes))
             {
+                BackupGameProcess.Add(gameGUID, "List files to backup");
                 if (!Directory.Exists(backupDir)) { Directory.CreateDirectory(backupDir); }
                 string backupPath = backupDir + "\\" + GameXMLNode.SelectSingleNode("Name").InnerText + "_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".zip";
                 List<string> filesToBackup = new List<string>();
                 foreach (XmlNode childNode in GameXMLNode.SelectSingleNode("./Backup").ChildNodes)
                 {
+                    BackupGameProcess[gameGUID] = "List files to backup : " + childNode.InnerText;
                     if (File.Exists(childNode.InnerText))
                     {
                         filesToBackup.Add(childNode.InnerText);
@@ -658,16 +688,19 @@ namespace GameserverControl
                     }
 
                 }
+                BackupGameProcess[gameGUID] = "Add files to ZIP";
                 using (FileStream zipToOpen = new FileStream(backupPath, FileMode.OpenOrCreate))
                 {
                     using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                     {
                         foreach(string file in filesToBackup)
                         {
+                            BackupGameProcess[gameGUID] = "Add files to ZIP : " + file;
                             archive.CreateEntryFromFile(file, file.Substring(3));
                         }
                     }
                 }
+                BackupGameProcess.Remove(gameGUID);
             }
             // Systray menu management
             senderToolStripMenuItem.Image = Properties.Resources.RedLightImg;
@@ -941,8 +974,7 @@ namespace GameserverControl
                 } 
                 else
                 {
-                    Process process = ProcessStart(GameXMLNode);
-                    GameProcess.Add(gameGUID, process);
+                    Task pStart = ProcessStart(GameXMLNode);
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "State", null);
                     tmpNode.InnerText = "Starting";
                     XMLResultNode.AppendChild(tmpNode);
@@ -991,7 +1023,7 @@ namespace GameserverControl
                 }
                 else
                 {
-                    ProcessStop(GameXMLNode);
+                    Task pStop = ProcessStop(GameXMLNode);
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "State", null);
                     tmpNode.InnerText = "Stopping";
                     XMLResultNode.AppendChild(tmpNode);
