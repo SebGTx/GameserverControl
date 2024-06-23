@@ -328,7 +328,7 @@ namespace GameserverControl
                     return;
                 }
 
-                Task pStart = ProcessStart(GameXMLNode);
+                ProcessStart(GameXMLNode);
             }
         }
 
@@ -349,7 +349,7 @@ namespace GameserverControl
                     return;
                 }
 
-                Task pStop = ProcessStop(GameXMLNode);
+                ProcessStop(GameXMLNode);
             }
         }
 
@@ -529,9 +529,9 @@ namespace GameserverControl
             return null;
         }
 
-        private async Task ProcessStart(XmlNode GameXMLNode)
+        private void ProcessStart(XmlNode GameXMLNode)
         {
-            await Task.Run(() =>
+            Task.Run(() =>
             {
                 string gameGUID = GameXMLNode.Attributes["guid"].Value;
                 string programBeforeStart = GameXMLNode.SelectSingleNode("./BeforeStart").InnerText;
@@ -621,9 +621,9 @@ namespace GameserverControl
             return null;
         }
 
-        private async Task ProcessStop(XmlNode GameXMLNode)
+        private void ProcessStop(XmlNode GameXMLNode)
         {
-            await Task.Run(() =>
+            Task.Run(() =>
             {
                 string gameGUID = GameXMLNode.Attributes["guid"].Value;
                 if (!GameProcess.ContainsKey(gameGUID)) { return; }
@@ -974,7 +974,7 @@ namespace GameserverControl
                 } 
                 else
                 {
-                    Task pStart = ProcessStart(GameXMLNode);
+                    ProcessStart(GameXMLNode);
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "State", null);
                     tmpNode.InnerText = "Starting";
                     XMLResultNode.AppendChild(tmpNode);
@@ -1023,7 +1023,7 @@ namespace GameserverControl
                 }
                 else
                 {
-                    Task pStop = ProcessStop(GameXMLNode);
+                    ProcessStop(GameXMLNode);
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "State", null);
                     tmpNode.InnerText = "Stopping";
                     XMLResultNode.AppendChild(tmpNode);
