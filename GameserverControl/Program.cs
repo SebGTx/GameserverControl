@@ -745,6 +745,10 @@ namespace GameserverControl
                 }
 
                 // Reply
+                XmlDocument XMLResult = new XmlDocument();
+                XmlNode XMLResultNode = XMLResult.AppendChild(XMLResult.CreateNode(XmlNodeType.Element, "Result", null));
+                XmlNode tmpNode;
+
                 HTTPResult result;
                 Match GameUriMatch;
                 if (
@@ -752,7 +756,16 @@ namespace GameserverControl
                     password == GCXMLConfig.SelectSingleNode("/Configs/WebServer/Password").InnerText
                     )
                 {
-                    result = new HTTPResult(404, "text/html", "<!DOCTYPE><html><head><title>Gameserver Control</title></head><body>Not found</body></html>");
+                    tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "State", null);
+                    tmpNode.InnerText = "Error";
+                    XMLResultNode.AppendChild(tmpNode);
+                    tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Message", null);
+                    tmpNode.InnerText = "Bad Request";
+                    XMLResultNode.AppendChild(tmpNode);
+                    tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+                    tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
+                    XMLResultNode.AppendChild(tmpNode);
+                    result = new HTTPResult(404, "application/xml", XMLResult.OuterXml);
 
                     // URI /api/v1/configs
                     if ((req.HttpMethod == "GET") && (req.Url.AbsolutePath == "/api/v1/configs")) { result = HTTPResultConfigs(); }
@@ -789,7 +802,16 @@ namespace GameserverControl
                 }
                 else
                 {
-                    result = new HTTPResult(401, "text/html", "<!DOCTYPE><html><head><title>Gameserver Control</title></head><body>Access denied</body></html>");
+                    tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "State", null);
+                    tmpNode.InnerText = "Error";
+                    XMLResultNode.AppendChild(tmpNode);
+                    tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Message", null);
+                    tmpNode.InnerText = "Access denied";
+                    XMLResultNode.AppendChild(tmpNode);
+                    tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+                    tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
+                    XMLResultNode.AppendChild(tmpNode);
+                    result = new HTTPResult(401, "application/xml", XMLResult.OuterXml);
                     resp.AddHeader("WWW-Authenticate", "Basic realm=\"Gameserver Control\"");
                 }
 
@@ -808,11 +830,21 @@ namespace GameserverControl
 
         private HTTPResult HTTPResultConfigs()
         {
-            XmlDocument GCXMLResultConfig = (XmlDocument) GCXMLConfig.Clone();
-            GCXMLResultConfig.SelectSingleNode("/Configs/WebServer/Login").InnerText = "***************";
-            GCXMLResultConfig.SelectSingleNode("/Configs/WebServer/Password").InnerText = "***************";
-            HTTPResult result = new HTTPResult("application/xml", GCXMLResultConfig.OuterXml);
-            GCXMLResultConfig = null;
+            XmlDocument XMLResult = new XmlDocument();
+            XmlNode XMLResultNode = XMLResult.AppendChild(XMLResult.CreateNode(XmlNodeType.Element, "Result", null));
+            XmlNode tmpNode;
+            HTTPResult result;
+
+            XmlNode ConfigsXMLNode = GCXMLConfig.SelectSingleNode("/Configs").Clone();
+            ConfigsXMLNode.SelectSingleNode("WebServer/Login").InnerText = "***************";
+            ConfigsXMLNode.SelectSingleNode("WebServer/Password").InnerText = "***************";
+            XmlNode tmpGameXMLNode = XMLResult.ImportNode(ConfigsXMLNode, true);
+            XMLResultNode.AppendChild(tmpGameXMLNode);
+            tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+            tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
+            XMLResultNode.AppendChild(tmpNode);
+
+            result = new HTTPResult(200, "application/xml", XMLResult.OuterXml);
             return result;
         }
 
@@ -828,6 +860,10 @@ namespace GameserverControl
             XMLResultNode.AppendChild(tmpNode);
             tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Message", null);
             tmpNode.InnerText = "The server will shutdown";
+            XMLResultNode.AppendChild(tmpNode);
+            tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+            tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
+            XMLResultNode.AppendChild(tmpNode);
             result = new HTTPResult(202, "application/xml", XMLResult.OuterXml);
 
             SystemShutdownOrReboot(false);
@@ -846,6 +882,10 @@ namespace GameserverControl
             XMLResultNode.AppendChild(tmpNode);
             tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Message", null);
             tmpNode.InnerText = "The server will reboot";
+            XMLResultNode.AppendChild(tmpNode);
+            tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+            tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
+            XMLResultNode.AppendChild(tmpNode);
             result = new HTTPResult(202, "application/xml", XMLResult.OuterXml);
 
             SystemShutdownOrReboot(true);
@@ -854,7 +894,19 @@ namespace GameserverControl
 
         private HTTPResult HTTPResultGames()
         {
-            HTTPResult result = new HTTPResult("application/xml", GamesXMLNode.OuterXml);
+            XmlDocument XMLResult = new XmlDocument();
+            XmlNode XMLResultNode = XMLResult.AppendChild(XMLResult.CreateNode(XmlNodeType.Element, "Result", null));
+            XmlNode tmpNode;
+            HTTPResult result;
+
+            XmlNode GamesXMLNode = GCXMLConfig.SelectSingleNode("/Configs/Games");
+            XmlNode tmpGamesXMLNode = XMLResult.ImportNode(GamesXMLNode, true);
+            XMLResultNode.AppendChild(tmpGamesXMLNode);
+            tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+            tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
+            XMLResultNode.AppendChild(tmpNode);
+
+            result = new HTTPResult(200, "application/xml", XMLResult.OuterXml);
             return result;
         }
 
@@ -874,6 +926,9 @@ namespace GameserverControl
                 tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Error", null);
                 tmpNode.InnerText = "GUID Not defined";
                 XMLResultNode.AppendChild(tmpNode);
+                tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+                tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
+                XMLResultNode.AppendChild(tmpNode);
                 result = new HTTPResult(400, "application/xml", XMLResult.OuterXml);
             }
             else
@@ -882,19 +937,29 @@ namespace GameserverControl
                 if (GameXMLNode == null)
                 {
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "State", null);
-                    tmpNode.InnerText = "This game does not exist";
+                    tmpNode.InnerText = "Error";
                     XMLResultNode.AppendChild(tmpNode);
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Message", null);
-                    tmpNode.InnerText = "Game not found";
+                    tmpNode.InnerText = "This game does not exist";
                     XMLResultNode.AppendChild(tmpNode);
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "GUID", null);
                     tmpNode.InnerText = gameGUID;
+                    XMLResultNode.AppendChild(tmpNode);
+                    tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+                    tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
                     XMLResultNode.AppendChild(tmpNode);
                     result = new HTTPResult(404, "application/xml", XMLResult.OuterXml);
                 }
                 else
                 {
-                    result = new HTTPResult(200, "application/xml", GameXMLNode.OuterXml);
+                    tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Config", null);
+                    XmlNode tmpGameXMLNode = XMLResult.ImportNode(GameXMLNode, true);
+                    tmpNode.AppendChild(tmpGameXMLNode);
+                    XMLResultNode.AppendChild(tmpNode);
+                    tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+                    tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
+                    XMLResultNode.AppendChild(tmpNode);
+                    result = new HTTPResult(200, "application/xml", XMLResult.OuterXml);
                 }
             }
 
@@ -917,6 +982,9 @@ namespace GameserverControl
                 tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Error", null);
                 tmpNode.InnerText = "GUID Not defined";
                 XMLResultNode.AppendChild(tmpNode);
+                tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+                tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
+                XMLResultNode.AppendChild(tmpNode);
                 result = new HTTPResult(400, "application/xml", XMLResult.OuterXml);
             }
             else
@@ -932,6 +1000,9 @@ namespace GameserverControl
                 XMLResultNode.AppendChild(tmpNode);
                 tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "GUID", null);
                 tmpNode.InnerText = gameGUID;
+                XMLResultNode.AppendChild(tmpNode);
+                tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+                tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
                 XMLResultNode.AppendChild(tmpNode);
                 result = new HTTPResult(Int32.Parse(ctrlReturn[2]), "application/xml", XMLResult.OuterXml);
             }
@@ -955,6 +1026,9 @@ namespace GameserverControl
                 tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Error", null);
                 tmpNode.InnerText = "GUID Not defined";
                 XMLResultNode.AppendChild(tmpNode);
+                tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+                tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
+                XMLResultNode.AppendChild(tmpNode);
                 result = new HTTPResult(400, "application/xml", XMLResult.OuterXml);
             }
             else
@@ -970,6 +1044,9 @@ namespace GameserverControl
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Error", null);
                     tmpNode.InnerText = ctrlReturn[0];
                     XMLResultNode.AppendChild(tmpNode);
+                    tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+                    tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
+                    XMLResultNode.AppendChild(tmpNode);
                     result = new HTTPResult(Int32.Parse(ctrlReturn[2]), "application/xml", XMLResult.OuterXml);
                 } 
                 else
@@ -980,6 +1057,9 @@ namespace GameserverControl
                     XMLResultNode.AppendChild(tmpNode);
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "GUID", null);
                     tmpNode.InnerText = gameGUID;
+                    XMLResultNode.AppendChild(tmpNode);
+                    tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+                    tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
                     XMLResultNode.AppendChild(tmpNode);
                     result = new HTTPResult(202, "application/xml", XMLResult.OuterXml);
                 }
@@ -1004,6 +1084,9 @@ namespace GameserverControl
                 tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Error", null);
                 tmpNode.InnerText = "GUID Not defined";
                 XMLResultNode.AppendChild(tmpNode);
+                tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+                tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
+                XMLResultNode.AppendChild(tmpNode);
                 result = new HTTPResult(400, "application/xml", XMLResult.OuterXml);
             }
             else
@@ -1019,6 +1102,9 @@ namespace GameserverControl
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Error", null);
                     tmpNode.InnerText = ctrlReturn[0];
                     XMLResultNode.AppendChild(tmpNode);
+                    tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+                    tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
+                    XMLResultNode.AppendChild(tmpNode);
                     result = new HTTPResult(Int32.Parse(ctrlReturn[2]), "application/xml", XMLResult.OuterXml);
                 }
                 else
@@ -1029,6 +1115,9 @@ namespace GameserverControl
                     XMLResultNode.AppendChild(tmpNode);
                     tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "GUID", null);
                     tmpNode.InnerText = gameGUID;
+                    XMLResultNode.AppendChild(tmpNode);
+                    tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
+                    tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
                     XMLResultNode.AppendChild(tmpNode);
                     result = new HTTPResult(202, "application/xml", XMLResult.OuterXml);
                 }
