@@ -538,7 +538,7 @@ namespace GameserverControl
                 string programToStart = GameXMLNode.SelectSingleNode("./Program").InnerText;
 
                 // Systray menu management
-                GamesToolStripMenuItem.GetCurrentParent().Invoke(new MethodInvoker(delegate
+                GamesToolStripMenuItem.GetCurrentParent().Invoke(new System.Windows.Forms.MethodInvoker(delegate
                 {
                     ToolStripMenuItem senderToolStripMenuItem = (ToolStripMenuItem)GamesToolStripMenuItem.DropDownItems[gameGUID];
                     senderToolStripMenuItem.Image = Properties.Resources.YellowLightImg;
@@ -593,7 +593,7 @@ namespace GameserverControl
                 GameProcess.Add(gameGUID, process);
 
                 // Systray menu management
-                GamesToolStripMenuItem.GetCurrentParent().Invoke(new MethodInvoker(delegate
+                GamesToolStripMenuItem.GetCurrentParent().Invoke(new System.Windows.Forms.MethodInvoker(delegate
                 {
                     ToolStripMenuItem senderToolStripMenuItem = (ToolStripMenuItem)GamesToolStripMenuItem.DropDownItems[gameGUID];
                     senderToolStripMenuItem.Image = Properties.Resources.GreenLightImg;

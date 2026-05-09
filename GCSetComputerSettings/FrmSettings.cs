@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Security.Principal;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -170,13 +171,19 @@ namespace GCSetComputerSettings
         // NETSH functions
         private void CallNETSH(string args)
         {
-            ProcessStartInfo processInfo = new ProcessStartInfo();
-            processInfo.FileName = "netsh.exe";
-            processInfo.Arguments = args;
-            processInfo.RedirectStandardOutput = true;
-            processInfo.RedirectStandardError = true;
-            processInfo.UseShellExecute = false;
-            processInfo.CreateNoWindow = true;
+            string netshCommand = $"chcp 65001 >nul && netsh {args}";
+
+            ProcessStartInfo processInfo = new ProcessStartInfo
+            {
+                FileName = "cmd.exe",
+                Arguments = "/c " + netshCommand,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                StandardOutputEncoding = Encoding.UTF8, // Lecture UTF-8
+                StandardErrorEncoding = Encoding.UTF8,
+            };
 
             WindowsPrincipal pricipal = new WindowsPrincipal(WindowsIdentity.GetCurrent());
             bool hasAdministrativeRight = pricipal.IsInRole(WindowsBuiltInRole.Administrator);
@@ -185,9 +192,11 @@ namespace GCSetComputerSettings
                 processInfo.Verb = "runas";
             }
 
-            Process process = new Process();
-            process.StartInfo = processInfo;
-            process.EnableRaisingEvents = true;
+            Process process = new Process
+            {
+                StartInfo = processInfo,
+                EnableRaisingEvents = true
+            };
             process.Exited += new EventHandler(ProcessExited);
 
             try
@@ -207,8 +216,10 @@ namespace GCSetComputerSettings
             Process process = (Process)sender;
             ProcessStartInfo startInfo = (ProcessStartInfo)process.StartInfo;
 
-            string StdOutput = getCMDOutput(process.StandardOutput); //.ReadToEnd();
-            string StdError = getCMDOutput(process.StandardError); //.ReadToEnd();
+            //string StdOutput = getCMDOutput(process.StandardOutput); //.ReadToEnd();
+            //string StdError = getCMDOutput(process.StandardError); //.ReadToEnd();
+            string StdOutput = process.StandardOutput.ReadToEnd();
+            string StdError = process.StandardError.ReadToEnd();
             Console.WriteLine(
                 $"Arguments    : {startInfo.Arguments}\n" +
                 $"Exit time    : {process.ExitTime}\n" +
@@ -221,33 +232,13 @@ namespace GCSetComputerSettings
             if (process.ExitCode > 0)
             {
                 MessageBox.Show(StdOutput + StdError, "Error in NETSH command", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Debug.WriteLine("Error in NETSH command : " + StdOutput + StdError);
             }
             else
             {
                 MessageBox.Show(StdOutput, "NETSH command successfull", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Debug.WriteLine("NETSH command successfull : " + StdOutput);
             }
-        }
-
-        private string getCMDOutput(StreamReader cmdOutput)
-        {
-            string inputstring = cmdOutput.ReadToEnd();
-
-            // Create two different encodings.
-            Encoding inputEncoding = cmdOutput.CurrentEncoding;
-            Encoding outputEncoding = Encoding.ASCII;
-
-            // Convert the string into a byte array.
-            byte[] inputBytes = inputEncoding.GetBytes(inputstring);
-
-            // Perform the conversion from one encoding to the other.
-            byte[] outputBytes = Encoding.Convert(inputEncoding, outputEncoding, inputBytes);
-
-            // Convert the new byte[] into a char[] and then into a string.
-            char[] unicodeChars = new char[outputEncoding.GetCharCount(outputBytes, 0, outputBytes.Length)];
-            outputEncoding.GetChars(outputBytes, 0, outputBytes.Length, unicodeChars, 0);
-            string outputstring = new string(unicodeChars);
-
-            return outputstring;
         }
     }
 }
