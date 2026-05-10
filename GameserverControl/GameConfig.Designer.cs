@@ -30,556 +30,627 @@ namespace GameserverControl
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmGameConfig));
-            this.lblGUID = new System.Windows.Forms.Label();
-            this.txtGUID = new System.Windows.Forms.TextBox();
-            this.lblName = new System.Windows.Forms.Label();
-            this.tlpGlobal = new System.Windows.Forms.TableLayoutPanel();
-            this.tlpBeforeStart = new System.Windows.Forms.TableLayoutPanel();
-            this.butBeforeStart = new System.Windows.Forms.Button();
-            this.txtBeforeStart = new System.Windows.Forms.TextBox();
-            this.lblBeforeStart = new System.Windows.Forms.Label();
-            this.lblWorkingDir = new System.Windows.Forms.Label();
-            this.lblLogs = new System.Windows.Forms.Label();
-            this.txtName = new System.Windows.Forms.TextBox();
-            this.lblProgram = new System.Windows.Forms.Label();
-            this.tlpProgram = new System.Windows.Forms.TableLayoutPanel();
-            this.butProgram = new System.Windows.Forms.Button();
-            this.txtProgram = new System.Windows.Forms.TextBox();
-            this.lblArgs = new System.Windows.Forms.Label();
-            this.txtArgs = new System.Windows.Forms.TextBox();
-            this.tlpLogs = new System.Windows.Forms.TableLayoutPanel();
-            this.txtLogs = new System.Windows.Forms.TextBox();
-            this.butLogs = new System.Windows.Forms.Button();
-            this.tlpButtons = new System.Windows.Forms.TableLayoutPanel();
-            this.butSave = new System.Windows.Forms.Button();
-            this.butCancel = new System.Windows.Forms.Button();
-            this.tlpWorkingDir = new System.Windows.Forms.TableLayoutPanel();
-            this.butWorkingDir = new System.Windows.Forms.Button();
-            this.txtWorkingDir = new System.Windows.Forms.TextBox();
-            this.lblBackup = new System.Windows.Forms.Label();
-            this.tlpBackup = new System.Windows.Forms.TableLayoutPanel();
-            this.lstBackup = new System.Windows.Forms.ListBox();
-            this.butBackupAddFile = new System.Windows.Forms.Button();
-            this.butBackupAddFolder = new System.Windows.Forms.Button();
-            this.butBackupRemove = new System.Windows.Forms.Button();
-            this.lblBackupDir = new System.Windows.Forms.Label();
-            this.tlpBackupDir = new System.Windows.Forms.TableLayoutPanel();
-            this.butBackupDir = new System.Windows.Forms.Button();
-            this.txtBackupDir = new System.Windows.Forms.TextBox();
-            this.openFileDialogCtrl = new System.Windows.Forms.OpenFileDialog();
-            this.folderBrowserDialogCtrl = new System.Windows.Forms.FolderBrowserDialog();
-            this.tlpGlobal.SuspendLayout();
-            this.tlpBeforeStart.SuspendLayout();
-            this.tlpProgram.SuspendLayout();
-            this.tlpLogs.SuspendLayout();
-            this.tlpButtons.SuspendLayout();
-            this.tlpWorkingDir.SuspendLayout();
-            this.tlpBackup.SuspendLayout();
-            this.tlpBackupDir.SuspendLayout();
-            this.SuspendLayout();
+            lblGUID = new System.Windows.Forms.Label();
+            txtGUID = new System.Windows.Forms.TextBox();
+            lblName = new System.Windows.Forms.Label();
+            tlpGlobal = new System.Windows.Forms.TableLayoutPanel();
+            txtName = new System.Windows.Forms.TextBox();
+            lblProgram = new System.Windows.Forms.Label();
+            tlpProgram = new System.Windows.Forms.TableLayoutPanel();
+            butProgram = new System.Windows.Forms.Button();
+            txtProgram = new System.Windows.Forms.TextBox();
+            lblArgs = new System.Windows.Forms.Label();
+            txtArgs = new System.Windows.Forms.TextBox();
+            lblWorkingDir = new System.Windows.Forms.Label();
+            tlpWorkingDir = new System.Windows.Forms.TableLayoutPanel();
+            butWorkingDir = new System.Windows.Forms.Button();
+            txtWorkingDir = new System.Windows.Forms.TextBox();
+            lblBeforeStart = new System.Windows.Forms.Label();
+            tlpBeforeStart = new System.Windows.Forms.TableLayoutPanel();
+            butBeforeStart = new System.Windows.Forms.Button();
+            txtBeforeStart = new System.Windows.Forms.TextBox();
+            lblLogs = new System.Windows.Forms.Label();
+            tlpLogs = new System.Windows.Forms.TableLayoutPanel();
+            txtLogs = new System.Windows.Forms.TextBox();
+            butLogs = new System.Windows.Forms.Button();
+            lblBackup = new System.Windows.Forms.Label();
+            tlpBackup = new System.Windows.Forms.TableLayoutPanel();
+            lstBackup = new System.Windows.Forms.ListBox();
+            butBackupAddFile = new System.Windows.Forms.Button();
+            butBackupAddFolder = new System.Windows.Forms.Button();
+            butBackupRemove = new System.Windows.Forms.Button();
+            lblBackupDir = new System.Windows.Forms.Label();
+            tlpBackupDir = new System.Windows.Forms.TableLayoutPanel();
+            butBackupDir = new System.Windows.Forms.Button();
+            txtBackupDir = new System.Windows.Forms.TextBox();
+            tlpButtons = new System.Windows.Forms.TableLayoutPanel();
+            butSave = new System.Windows.Forms.Button();
+            butCancel = new System.Windows.Forms.Button();
+            tlpCheckBox = new System.Windows.Forms.TableLayoutPanel();
+            cbAutoStart = new System.Windows.Forms.CheckBox();
+            cbAutoRestartOnCrash = new System.Windows.Forms.CheckBox();
+            openFileDialogCtrl = new System.Windows.Forms.OpenFileDialog();
+            folderBrowserDialogCtrl = new System.Windows.Forms.FolderBrowserDialog();
+            tlpGlobal.SuspendLayout();
+            tlpProgram.SuspendLayout();
+            tlpWorkingDir.SuspendLayout();
+            tlpBeforeStart.SuspendLayout();
+            tlpLogs.SuspendLayout();
+            tlpBackup.SuspendLayout();
+            tlpBackupDir.SuspendLayout();
+            tlpButtons.SuspendLayout();
+            tlpCheckBox.SuspendLayout();
+            SuspendLayout();
             // 
             // lblGUID
             // 
-            this.lblGUID.AutoSize = true;
-            this.lblGUID.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblGUID.Location = new System.Drawing.Point(3, 0);
-            this.lblGUID.Name = "lblGUID";
-            this.lblGUID.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
-            this.lblGUID.Size = new System.Drawing.Size(20, 18);
-            this.lblGUID.TabIndex = 0;
-            this.lblGUID.Text = "ID";
+            lblGUID.AutoSize = true;
+            lblGUID.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            lblGUID.Location = new System.Drawing.Point(4, 0);
+            lblGUID.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblGUID.Name = "lblGUID";
+            lblGUID.Padding = new System.Windows.Forms.Padding(0, 0, 0, 6);
+            lblGUID.Size = new System.Drawing.Size(20, 19);
+            lblGUID.TabIndex = 0;
+            lblGUID.Text = "ID";
             // 
             // txtGUID
             // 
-            this.txtGUID.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtGUID.Location = new System.Drawing.Point(3, 21);
-            this.txtGUID.Name = "txtGUID";
-            this.txtGUID.ReadOnly = true;
-            this.txtGUID.Size = new System.Drawing.Size(568, 20);
-            this.txtGUID.TabIndex = 1;
+            txtGUID.Dock = System.Windows.Forms.DockStyle.Top;
+            txtGUID.Location = new System.Drawing.Point(4, 22);
+            txtGUID.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            txtGUID.Name = "txtGUID";
+            txtGUID.ReadOnly = true;
+            txtGUID.Size = new System.Drawing.Size(661, 23);
+            txtGUID.TabIndex = 1;
             // 
             // lblName
             // 
-            this.lblName.AutoSize = true;
-            this.lblName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblName.ForeColor = System.Drawing.Color.Red;
-            this.lblName.Location = new System.Drawing.Point(3, 44);
-            this.lblName.Name = "lblName";
-            this.lblName.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.lblName.Size = new System.Drawing.Size(39, 23);
-            this.lblName.TabIndex = 2;
-            this.lblName.Text = "Name";
+            lblName.AutoSize = true;
+            lblName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            lblName.ForeColor = System.Drawing.Color.Red;
+            lblName.Location = new System.Drawing.Point(4, 48);
+            lblName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblName.Name = "lblName";
+            lblName.Padding = new System.Windows.Forms.Padding(0, 6, 0, 6);
+            lblName.Size = new System.Drawing.Size(39, 25);
+            lblName.TabIndex = 2;
+            lblName.Text = "Name";
             // 
             // tlpGlobal
             // 
-            this.tlpGlobal.ColumnCount = 1;
-            this.tlpGlobal.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpGlobal.Controls.Add(this.tlpBeforeStart, 0, 11);
-            this.tlpGlobal.Controls.Add(this.lblBeforeStart, 0, 10);
-            this.tlpGlobal.Controls.Add(this.lblWorkingDir, 0, 8);
-            this.tlpGlobal.Controls.Add(this.lblLogs, 0, 12);
-            this.tlpGlobal.Controls.Add(this.lblGUID, 0, 0);
-            this.tlpGlobal.Controls.Add(this.txtGUID, 0, 1);
-            this.tlpGlobal.Controls.Add(this.lblName, 0, 2);
-            this.tlpGlobal.Controls.Add(this.txtName, 0, 3);
-            this.tlpGlobal.Controls.Add(this.lblProgram, 0, 4);
-            this.tlpGlobal.Controls.Add(this.tlpProgram, 0, 5);
-            this.tlpGlobal.Controls.Add(this.lblArgs, 0, 6);
-            this.tlpGlobal.Controls.Add(this.txtArgs, 0, 7);
-            this.tlpGlobal.Controls.Add(this.tlpLogs, 0, 13);
-            this.tlpGlobal.Controls.Add(this.tlpButtons, 0, 18);
-            this.tlpGlobal.Controls.Add(this.tlpWorkingDir, 0, 9);
-            this.tlpGlobal.Controls.Add(this.lblBackup, 0, 14);
-            this.tlpGlobal.Controls.Add(this.tlpBackup, 0, 15);
-            this.tlpGlobal.Controls.Add(this.lblBackupDir, 0, 16);
-            this.tlpGlobal.Controls.Add(this.tlpBackupDir, 0, 17);
-            this.tlpGlobal.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpGlobal.Location = new System.Drawing.Point(5, 5);
-            this.tlpGlobal.Name = "tlpGlobal";
-            this.tlpGlobal.RowCount = 19;
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 150F));
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpGlobal.Size = new System.Drawing.Size(574, 606);
-            this.tlpGlobal.TabIndex = 0;
-            // 
-            // tlpBeforeStart
-            // 
-            this.tlpBeforeStart.AutoSize = true;
-            this.tlpBeforeStart.ColumnCount = 2;
-            this.tlpBeforeStart.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpBeforeStart.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpBeforeStart.Controls.Add(this.butBeforeStart, 0, 0);
-            this.tlpBeforeStart.Controls.Add(this.txtBeforeStart, 0, 0);
-            this.tlpBeforeStart.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tlpBeforeStart.Location = new System.Drawing.Point(3, 266);
-            this.tlpBeforeStart.Name = "tlpBeforeStart";
-            this.tlpBeforeStart.RowCount = 1;
-            this.tlpBeforeStart.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpBeforeStart.Size = new System.Drawing.Size(568, 20);
-            this.tlpBeforeStart.TabIndex = 18;
-            // 
-            // butBeforeStart
-            // 
-            this.butBeforeStart.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.butBeforeStart.Location = new System.Drawing.Point(543, 0);
-            this.butBeforeStart.Margin = new System.Windows.Forms.Padding(0);
-            this.butBeforeStart.Name = "butBeforeStart";
-            this.butBeforeStart.Size = new System.Drawing.Size(25, 20);
-            this.butBeforeStart.TabIndex = 2;
-            this.butBeforeStart.Text = "...";
-            this.butBeforeStart.UseVisualStyleBackColor = true;
-            this.butBeforeStart.Click += new System.EventHandler(this.butBeforeStart_Click);
-            // 
-            // txtBeforeStart
-            // 
-            this.txtBeforeStart.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtBeforeStart.Location = new System.Drawing.Point(0, 0);
-            this.txtBeforeStart.Margin = new System.Windows.Forms.Padding(0);
-            this.txtBeforeStart.Name = "txtBeforeStart";
-            this.txtBeforeStart.Size = new System.Drawing.Size(543, 20);
-            this.txtBeforeStart.TabIndex = 1;
-            // 
-            // lblBeforeStart
-            // 
-            this.lblBeforeStart.AutoSize = true;
-            this.lblBeforeStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblBeforeStart.Location = new System.Drawing.Point(3, 240);
-            this.lblBeforeStart.Name = "lblBeforeStart";
-            this.lblBeforeStart.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.lblBeforeStart.Size = new System.Drawing.Size(73, 23);
-            this.lblBeforeStart.TabIndex = 17;
-            this.lblBeforeStart.Text = "Before start";
-            // 
-            // lblWorkingDir
-            // 
-            this.lblWorkingDir.AutoSize = true;
-            this.lblWorkingDir.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblWorkingDir.Location = new System.Drawing.Point(3, 191);
-            this.lblWorkingDir.Name = "lblWorkingDir";
-            this.lblWorkingDir.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.lblWorkingDir.Size = new System.Drawing.Size(107, 23);
-            this.lblWorkingDir.TabIndex = 11;
-            this.lblWorkingDir.Text = "Working directory";
-            // 
-            // lblLogs
-            // 
-            this.lblLogs.AutoSize = true;
-            this.lblLogs.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLogs.Location = new System.Drawing.Point(3, 289);
-            this.lblLogs.Name = "lblLogs";
-            this.lblLogs.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.lblLogs.Size = new System.Drawing.Size(34, 23);
-            this.lblLogs.TabIndex = 8;
-            this.lblLogs.Text = "Logs";
+            tlpGlobal.ColumnCount = 1;
+            tlpGlobal.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tlpGlobal.Controls.Add(lblGUID, 0, 0);
+            tlpGlobal.Controls.Add(txtGUID, 0, 1);
+            tlpGlobal.Controls.Add(lblName, 0, 2);
+            tlpGlobal.Controls.Add(txtName, 0, 3);
+            tlpGlobal.Controls.Add(lblProgram, 0, 4);
+            tlpGlobal.Controls.Add(tlpProgram, 0, 5);
+            tlpGlobal.Controls.Add(lblArgs, 0, 6);
+            tlpGlobal.Controls.Add(txtArgs, 0, 7);
+            tlpGlobal.Controls.Add(lblWorkingDir, 0, 8);
+            tlpGlobal.Controls.Add(tlpWorkingDir, 0, 9);
+            tlpGlobal.Controls.Add(lblBeforeStart, 0, 10);
+            tlpGlobal.Controls.Add(tlpBeforeStart, 0, 11);
+            tlpGlobal.Controls.Add(lblLogs, 0, 12);
+            tlpGlobal.Controls.Add(tlpLogs, 0, 13);
+            tlpGlobal.Controls.Add(lblBackup, 0, 14);
+            tlpGlobal.Controls.Add(tlpBackup, 0, 15);
+            tlpGlobal.Controls.Add(lblBackupDir, 0, 16);
+            tlpGlobal.Controls.Add(tlpBackupDir, 0, 17);
+            tlpGlobal.Controls.Add(tlpButtons, 0, 19);
+            tlpGlobal.Controls.Add(tlpCheckBox, 0, 18);
+            tlpGlobal.Dock = System.Windows.Forms.DockStyle.Fill;
+            tlpGlobal.Location = new System.Drawing.Point(6, 6);
+            tlpGlobal.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tlpGlobal.Name = "tlpGlobal";
+            tlpGlobal.RowCount = 20;
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpGlobal.Size = new System.Drawing.Size(669, 717);
+            tlpGlobal.TabIndex = 0;
             // 
             // txtName
             // 
-            this.txtName.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtName.Location = new System.Drawing.Point(3, 70);
-            this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(568, 20);
-            this.txtName.TabIndex = 3;
+            txtName.Dock = System.Windows.Forms.DockStyle.Top;
+            txtName.Location = new System.Drawing.Point(4, 76);
+            txtName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            txtName.Name = "txtName";
+            txtName.Size = new System.Drawing.Size(661, 23);
+            txtName.TabIndex = 3;
             // 
             // lblProgram
             // 
-            this.lblProgram.AutoSize = true;
-            this.lblProgram.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblProgram.ForeColor = System.Drawing.Color.Red;
-            this.lblProgram.Location = new System.Drawing.Point(3, 93);
-            this.lblProgram.Name = "lblProgram";
-            this.lblProgram.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.lblProgram.Size = new System.Drawing.Size(53, 23);
-            this.lblProgram.TabIndex = 4;
-            this.lblProgram.Text = "Program";
+            lblProgram.AutoSize = true;
+            lblProgram.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            lblProgram.ForeColor = System.Drawing.Color.Red;
+            lblProgram.Location = new System.Drawing.Point(4, 102);
+            lblProgram.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblProgram.Name = "lblProgram";
+            lblProgram.Padding = new System.Windows.Forms.Padding(0, 6, 0, 6);
+            lblProgram.Size = new System.Drawing.Size(53, 25);
+            lblProgram.TabIndex = 4;
+            lblProgram.Text = "Program";
             // 
             // tlpProgram
             // 
-            this.tlpProgram.AutoSize = true;
-            this.tlpProgram.ColumnCount = 2;
-            this.tlpProgram.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpProgram.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tlpProgram.Controls.Add(this.butProgram, 1, 0);
-            this.tlpProgram.Controls.Add(this.txtProgram, 0, 0);
-            this.tlpProgram.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tlpProgram.Location = new System.Drawing.Point(3, 119);
-            this.tlpProgram.Name = "tlpProgram";
-            this.tlpProgram.RowCount = 1;
-            this.tlpProgram.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpProgram.Size = new System.Drawing.Size(568, 20);
-            this.tlpProgram.TabIndex = 5;
+            tlpProgram.AutoSize = true;
+            tlpProgram.ColumnCount = 2;
+            tlpProgram.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tlpProgram.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            tlpProgram.Controls.Add(butProgram, 1, 0);
+            tlpProgram.Controls.Add(txtProgram, 0, 0);
+            tlpProgram.Dock = System.Windows.Forms.DockStyle.Top;
+            tlpProgram.Location = new System.Drawing.Point(4, 130);
+            tlpProgram.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tlpProgram.Name = "tlpProgram";
+            tlpProgram.RowCount = 1;
+            tlpProgram.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpProgram.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            tlpProgram.Size = new System.Drawing.Size(661, 27);
+            tlpProgram.TabIndex = 5;
             // 
             // butProgram
             // 
-            this.butProgram.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.butProgram.Location = new System.Drawing.Point(543, 0);
-            this.butProgram.Margin = new System.Windows.Forms.Padding(0);
-            this.butProgram.Name = "butProgram";
-            this.butProgram.Size = new System.Drawing.Size(25, 20);
-            this.butProgram.TabIndex = 1;
-            this.butProgram.Text = "...";
-            this.butProgram.UseVisualStyleBackColor = true;
-            this.butProgram.Click += new System.EventHandler(this.butProgram_Click);
+            butProgram.Dock = System.Windows.Forms.DockStyle.Fill;
+            butProgram.Location = new System.Drawing.Point(632, 0);
+            butProgram.Margin = new System.Windows.Forms.Padding(0);
+            butProgram.Name = "butProgram";
+            butProgram.Size = new System.Drawing.Size(29, 27);
+            butProgram.TabIndex = 1;
+            butProgram.Text = "...";
+            butProgram.UseVisualStyleBackColor = true;
+            butProgram.Click += butProgram_Click;
             // 
             // txtProgram
             // 
-            this.txtProgram.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtProgram.Location = new System.Drawing.Point(0, 0);
-            this.txtProgram.Margin = new System.Windows.Forms.Padding(0);
-            this.txtProgram.Name = "txtProgram";
-            this.txtProgram.Size = new System.Drawing.Size(543, 20);
-            this.txtProgram.TabIndex = 0;
+            txtProgram.Dock = System.Windows.Forms.DockStyle.Top;
+            txtProgram.Location = new System.Drawing.Point(0, 0);
+            txtProgram.Margin = new System.Windows.Forms.Padding(0);
+            txtProgram.Name = "txtProgram";
+            txtProgram.Size = new System.Drawing.Size(632, 23);
+            txtProgram.TabIndex = 0;
             // 
             // lblArgs
             // 
-            this.lblArgs.AutoSize = true;
-            this.lblArgs.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblArgs.Location = new System.Drawing.Point(3, 142);
-            this.lblArgs.Name = "lblArgs";
-            this.lblArgs.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.lblArgs.Size = new System.Drawing.Size(66, 23);
-            this.lblArgs.TabIndex = 6;
-            this.lblArgs.Text = "Arguments";
+            lblArgs.AutoSize = true;
+            lblArgs.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            lblArgs.Location = new System.Drawing.Point(4, 160);
+            lblArgs.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblArgs.Name = "lblArgs";
+            lblArgs.Padding = new System.Windows.Forms.Padding(0, 6, 0, 6);
+            lblArgs.Size = new System.Drawing.Size(66, 25);
+            lblArgs.TabIndex = 6;
+            lblArgs.Text = "Arguments";
             // 
             // txtArgs
             // 
-            this.txtArgs.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtArgs.Location = new System.Drawing.Point(3, 168);
-            this.txtArgs.Name = "txtArgs";
-            this.txtArgs.Size = new System.Drawing.Size(568, 20);
-            this.txtArgs.TabIndex = 7;
+            txtArgs.Dock = System.Windows.Forms.DockStyle.Top;
+            txtArgs.Location = new System.Drawing.Point(4, 188);
+            txtArgs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            txtArgs.Name = "txtArgs";
+            txtArgs.Size = new System.Drawing.Size(661, 23);
+            txtArgs.TabIndex = 7;
             // 
-            // tlpLogs
+            // lblWorkingDir
             // 
-            this.tlpLogs.AutoSize = true;
-            this.tlpLogs.ColumnCount = 2;
-            this.tlpLogs.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpLogs.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpLogs.Controls.Add(this.txtLogs, 0, 0);
-            this.tlpLogs.Controls.Add(this.butLogs, 1, 0);
-            this.tlpLogs.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tlpLogs.Location = new System.Drawing.Point(3, 315);
-            this.tlpLogs.Name = "tlpLogs";
-            this.tlpLogs.RowCount = 1;
-            this.tlpLogs.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpLogs.Size = new System.Drawing.Size(568, 20);
-            this.tlpLogs.TabIndex = 9;
-            // 
-            // txtLogs
-            // 
-            this.txtLogs.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtLogs.Location = new System.Drawing.Point(0, 0);
-            this.txtLogs.Margin = new System.Windows.Forms.Padding(0);
-            this.txtLogs.Name = "txtLogs";
-            this.txtLogs.Size = new System.Drawing.Size(543, 20);
-            this.txtLogs.TabIndex = 0;
-            // 
-            // butLogs
-            // 
-            this.butLogs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.butLogs.Location = new System.Drawing.Point(543, 0);
-            this.butLogs.Margin = new System.Windows.Forms.Padding(0);
-            this.butLogs.Name = "butLogs";
-            this.butLogs.Size = new System.Drawing.Size(25, 20);
-            this.butLogs.TabIndex = 1;
-            this.butLogs.Text = "...";
-            this.butLogs.UseVisualStyleBackColor = true;
-            this.butLogs.Click += new System.EventHandler(this.butLogs_Click);
-            // 
-            // tlpButtons
-            // 
-            this.tlpButtons.ColumnCount = 2;
-            this.tlpButtons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpButtons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpButtons.Controls.Add(this.butSave, 0, 0);
-            this.tlpButtons.Controls.Add(this.butCancel, 1, 0);
-            this.tlpButtons.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpButtons.Location = new System.Drawing.Point(3, 562);
-            this.tlpButtons.Name = "tlpButtons";
-            this.tlpButtons.RowCount = 1;
-            this.tlpButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 41F));
-            this.tlpButtons.Size = new System.Drawing.Size(568, 41);
-            this.tlpButtons.TabIndex = 10;
-            // 
-            // butSave
-            // 
-            this.butSave.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.butSave.Location = new System.Drawing.Point(0, 0);
-            this.butSave.Margin = new System.Windows.Forms.Padding(0);
-            this.butSave.Name = "butSave";
-            this.butSave.Size = new System.Drawing.Size(284, 41);
-            this.butSave.TabIndex = 0;
-            this.butSave.Text = "Save";
-            this.butSave.UseVisualStyleBackColor = true;
-            this.butSave.Click += new System.EventHandler(this.butSave_Click);
-            // 
-            // butCancel
-            // 
-            this.butCancel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.butCancel.Location = new System.Drawing.Point(284, 0);
-            this.butCancel.Margin = new System.Windows.Forms.Padding(0);
-            this.butCancel.Name = "butCancel";
-            this.butCancel.Size = new System.Drawing.Size(284, 41);
-            this.butCancel.TabIndex = 1;
-            this.butCancel.Text = "Cancel";
-            this.butCancel.UseVisualStyleBackColor = true;
-            this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+            lblWorkingDir.AutoSize = true;
+            lblWorkingDir.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            lblWorkingDir.Location = new System.Drawing.Point(4, 214);
+            lblWorkingDir.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblWorkingDir.Name = "lblWorkingDir";
+            lblWorkingDir.Padding = new System.Windows.Forms.Padding(0, 6, 0, 6);
+            lblWorkingDir.Size = new System.Drawing.Size(107, 25);
+            lblWorkingDir.TabIndex = 11;
+            lblWorkingDir.Text = "Working directory";
             // 
             // tlpWorkingDir
             // 
-            this.tlpWorkingDir.AutoSize = true;
-            this.tlpWorkingDir.ColumnCount = 2;
-            this.tlpWorkingDir.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpWorkingDir.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpWorkingDir.Controls.Add(this.butWorkingDir, 0, 0);
-            this.tlpWorkingDir.Controls.Add(this.txtWorkingDir, 0, 0);
-            this.tlpWorkingDir.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tlpWorkingDir.Location = new System.Drawing.Point(3, 217);
-            this.tlpWorkingDir.Name = "tlpWorkingDir";
-            this.tlpWorkingDir.RowCount = 1;
-            this.tlpWorkingDir.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpWorkingDir.Size = new System.Drawing.Size(568, 20);
-            this.tlpWorkingDir.TabIndex = 12;
+            tlpWorkingDir.AutoSize = true;
+            tlpWorkingDir.ColumnCount = 2;
+            tlpWorkingDir.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tlpWorkingDir.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+            tlpWorkingDir.Controls.Add(butWorkingDir, 0, 0);
+            tlpWorkingDir.Controls.Add(txtWorkingDir, 0, 0);
+            tlpWorkingDir.Dock = System.Windows.Forms.DockStyle.Top;
+            tlpWorkingDir.Location = new System.Drawing.Point(4, 242);
+            tlpWorkingDir.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tlpWorkingDir.Name = "tlpWorkingDir";
+            tlpWorkingDir.RowCount = 1;
+            tlpWorkingDir.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpWorkingDir.Size = new System.Drawing.Size(661, 27);
+            tlpWorkingDir.TabIndex = 12;
             // 
             // butWorkingDir
             // 
-            this.butWorkingDir.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.butWorkingDir.Location = new System.Drawing.Point(543, 0);
-            this.butWorkingDir.Margin = new System.Windows.Forms.Padding(0);
-            this.butWorkingDir.Name = "butWorkingDir";
-            this.butWorkingDir.Size = new System.Drawing.Size(25, 20);
-            this.butWorkingDir.TabIndex = 2;
-            this.butWorkingDir.Text = "...";
-            this.butWorkingDir.UseVisualStyleBackColor = true;
-            this.butWorkingDir.Click += new System.EventHandler(this.butWorkingDir_Click);
+            butWorkingDir.Dock = System.Windows.Forms.DockStyle.Fill;
+            butWorkingDir.Location = new System.Drawing.Point(632, 0);
+            butWorkingDir.Margin = new System.Windows.Forms.Padding(0);
+            butWorkingDir.Name = "butWorkingDir";
+            butWorkingDir.Size = new System.Drawing.Size(29, 27);
+            butWorkingDir.TabIndex = 2;
+            butWorkingDir.Text = "...";
+            butWorkingDir.UseVisualStyleBackColor = true;
+            butWorkingDir.Click += butWorkingDir_Click;
             // 
             // txtWorkingDir
             // 
-            this.txtWorkingDir.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtWorkingDir.Location = new System.Drawing.Point(0, 0);
-            this.txtWorkingDir.Margin = new System.Windows.Forms.Padding(0);
-            this.txtWorkingDir.Name = "txtWorkingDir";
-            this.txtWorkingDir.Size = new System.Drawing.Size(543, 20);
-            this.txtWorkingDir.TabIndex = 1;
+            txtWorkingDir.Dock = System.Windows.Forms.DockStyle.Top;
+            txtWorkingDir.Location = new System.Drawing.Point(0, 0);
+            txtWorkingDir.Margin = new System.Windows.Forms.Padding(0);
+            txtWorkingDir.Name = "txtWorkingDir";
+            txtWorkingDir.Size = new System.Drawing.Size(632, 23);
+            txtWorkingDir.TabIndex = 1;
+            // 
+            // lblBeforeStart
+            // 
+            lblBeforeStart.AutoSize = true;
+            lblBeforeStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            lblBeforeStart.Location = new System.Drawing.Point(4, 272);
+            lblBeforeStart.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblBeforeStart.Name = "lblBeforeStart";
+            lblBeforeStart.Padding = new System.Windows.Forms.Padding(0, 6, 0, 6);
+            lblBeforeStart.Size = new System.Drawing.Size(73, 25);
+            lblBeforeStart.TabIndex = 17;
+            lblBeforeStart.Text = "Before start";
+            // 
+            // tlpBeforeStart
+            // 
+            tlpBeforeStart.AutoSize = true;
+            tlpBeforeStart.ColumnCount = 2;
+            tlpBeforeStart.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tlpBeforeStart.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+            tlpBeforeStart.Controls.Add(butBeforeStart, 0, 0);
+            tlpBeforeStart.Controls.Add(txtBeforeStart, 0, 0);
+            tlpBeforeStart.Dock = System.Windows.Forms.DockStyle.Top;
+            tlpBeforeStart.Location = new System.Drawing.Point(4, 300);
+            tlpBeforeStart.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tlpBeforeStart.Name = "tlpBeforeStart";
+            tlpBeforeStart.RowCount = 1;
+            tlpBeforeStart.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpBeforeStart.Size = new System.Drawing.Size(661, 27);
+            tlpBeforeStart.TabIndex = 18;
+            // 
+            // butBeforeStart
+            // 
+            butBeforeStart.Dock = System.Windows.Forms.DockStyle.Fill;
+            butBeforeStart.Location = new System.Drawing.Point(632, 0);
+            butBeforeStart.Margin = new System.Windows.Forms.Padding(0);
+            butBeforeStart.Name = "butBeforeStart";
+            butBeforeStart.Size = new System.Drawing.Size(29, 27);
+            butBeforeStart.TabIndex = 2;
+            butBeforeStart.Text = "...";
+            butBeforeStart.UseVisualStyleBackColor = true;
+            butBeforeStart.Click += butBeforeStart_Click;
+            // 
+            // txtBeforeStart
+            // 
+            txtBeforeStart.Dock = System.Windows.Forms.DockStyle.Top;
+            txtBeforeStart.Location = new System.Drawing.Point(0, 0);
+            txtBeforeStart.Margin = new System.Windows.Forms.Padding(0);
+            txtBeforeStart.Name = "txtBeforeStart";
+            txtBeforeStart.Size = new System.Drawing.Size(632, 23);
+            txtBeforeStart.TabIndex = 1;
+            // 
+            // lblLogs
+            // 
+            lblLogs.AutoSize = true;
+            lblLogs.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            lblLogs.Location = new System.Drawing.Point(4, 330);
+            lblLogs.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblLogs.Name = "lblLogs";
+            lblLogs.Padding = new System.Windows.Forms.Padding(0, 6, 0, 6);
+            lblLogs.Size = new System.Drawing.Size(34, 25);
+            lblLogs.TabIndex = 8;
+            lblLogs.Text = "Logs";
+            // 
+            // tlpLogs
+            // 
+            tlpLogs.AutoSize = true;
+            tlpLogs.ColumnCount = 2;
+            tlpLogs.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tlpLogs.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+            tlpLogs.Controls.Add(txtLogs, 0, 0);
+            tlpLogs.Controls.Add(butLogs, 1, 0);
+            tlpLogs.Dock = System.Windows.Forms.DockStyle.Top;
+            tlpLogs.Location = new System.Drawing.Point(4, 358);
+            tlpLogs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tlpLogs.Name = "tlpLogs";
+            tlpLogs.RowCount = 1;
+            tlpLogs.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpLogs.Size = new System.Drawing.Size(661, 27);
+            tlpLogs.TabIndex = 9;
+            // 
+            // txtLogs
+            // 
+            txtLogs.Dock = System.Windows.Forms.DockStyle.Top;
+            txtLogs.Location = new System.Drawing.Point(0, 0);
+            txtLogs.Margin = new System.Windows.Forms.Padding(0);
+            txtLogs.Name = "txtLogs";
+            txtLogs.Size = new System.Drawing.Size(632, 23);
+            txtLogs.TabIndex = 0;
+            // 
+            // butLogs
+            // 
+            butLogs.Dock = System.Windows.Forms.DockStyle.Fill;
+            butLogs.Location = new System.Drawing.Point(632, 0);
+            butLogs.Margin = new System.Windows.Forms.Padding(0);
+            butLogs.Name = "butLogs";
+            butLogs.Size = new System.Drawing.Size(29, 27);
+            butLogs.TabIndex = 1;
+            butLogs.Text = "...";
+            butLogs.UseVisualStyleBackColor = true;
+            butLogs.Click += butLogs_Click;
             // 
             // lblBackup
             // 
-            this.lblBackup.AutoSize = true;
-            this.lblBackup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblBackup.Location = new System.Drawing.Point(3, 338);
-            this.lblBackup.Name = "lblBackup";
-            this.lblBackup.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.lblBackup.Size = new System.Drawing.Size(161, 23);
-            this.lblBackup.TabIndex = 13;
-            this.lblBackup.Text = "Files and folders to backup";
+            lblBackup.AutoSize = true;
+            lblBackup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            lblBackup.Location = new System.Drawing.Point(4, 388);
+            lblBackup.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblBackup.Name = "lblBackup";
+            lblBackup.Padding = new System.Windows.Forms.Padding(0, 6, 0, 6);
+            lblBackup.Size = new System.Drawing.Size(161, 25);
+            lblBackup.TabIndex = 13;
+            lblBackup.Text = "Files and folders to backup";
             // 
             // tlpBackup
             // 
-            this.tlpBackup.ColumnCount = 2;
-            this.tlpBackup.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpBackup.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
-            this.tlpBackup.Controls.Add(this.lstBackup, 0, 0);
-            this.tlpBackup.Controls.Add(this.butBackupAddFile, 1, 0);
-            this.tlpBackup.Controls.Add(this.butBackupAddFolder, 1, 1);
-            this.tlpBackup.Controls.Add(this.butBackupRemove, 1, 2);
-            this.tlpBackup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpBackup.Location = new System.Drawing.Point(3, 364);
-            this.tlpBackup.Name = "tlpBackup";
-            this.tlpBackup.RowCount = 3;
-            this.tlpBackup.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tlpBackup.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tlpBackup.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tlpBackup.Size = new System.Drawing.Size(568, 144);
-            this.tlpBackup.TabIndex = 14;
+            tlpBackup.ColumnCount = 2;
+            tlpBackup.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tlpBackup.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
+            tlpBackup.Controls.Add(lstBackup, 0, 0);
+            tlpBackup.Controls.Add(butBackupAddFile, 1, 0);
+            tlpBackup.Controls.Add(butBackupAddFolder, 1, 1);
+            tlpBackup.Controls.Add(butBackupRemove, 1, 2);
+            tlpBackup.Dock = System.Windows.Forms.DockStyle.Fill;
+            tlpBackup.Location = new System.Drawing.Point(4, 416);
+            tlpBackup.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tlpBackup.Name = "tlpBackup";
+            tlpBackup.RowCount = 3;
+            tlpBackup.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            tlpBackup.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            tlpBackup.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            tlpBackup.Size = new System.Drawing.Size(661, 166);
+            tlpBackup.TabIndex = 14;
             // 
             // lstBackup
             // 
-            this.lstBackup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lstBackup.FormattingEnabled = true;
-            this.lstBackup.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.lstBackup.IntegralHeight = false;
-            this.lstBackup.Location = new System.Drawing.Point(0, 0);
-            this.lstBackup.Margin = new System.Windows.Forms.Padding(0);
-            this.lstBackup.Name = "lstBackup";
-            this.tlpBackup.SetRowSpan(this.lstBackup, 3);
-            this.lstBackup.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lstBackup.Size = new System.Drawing.Size(508, 144);
-            this.lstBackup.TabIndex = 0;
+            lstBackup.Dock = System.Windows.Forms.DockStyle.Fill;
+            lstBackup.FormattingEnabled = true;
+            lstBackup.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            lstBackup.IntegralHeight = false;
+            lstBackup.Location = new System.Drawing.Point(0, 0);
+            lstBackup.Margin = new System.Windows.Forms.Padding(0);
+            lstBackup.Name = "lstBackup";
+            tlpBackup.SetRowSpan(lstBackup, 3);
+            lstBackup.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            lstBackup.Size = new System.Drawing.Size(591, 166);
+            lstBackup.TabIndex = 0;
             // 
             // butBackupAddFile
             // 
-            this.butBackupAddFile.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.butBackupAddFile.Location = new System.Drawing.Point(508, 0);
-            this.butBackupAddFile.Margin = new System.Windows.Forms.Padding(0);
-            this.butBackupAddFile.Name = "butBackupAddFile";
-            this.butBackupAddFile.Size = new System.Drawing.Size(60, 48);
-            this.butBackupAddFile.TabIndex = 1;
-            this.butBackupAddFile.Text = "Add file";
-            this.butBackupAddFile.UseVisualStyleBackColor = true;
-            this.butBackupAddFile.Click += new System.EventHandler(this.butBackupAddFile_Click);
+            butBackupAddFile.Dock = System.Windows.Forms.DockStyle.Fill;
+            butBackupAddFile.Location = new System.Drawing.Point(591, 0);
+            butBackupAddFile.Margin = new System.Windows.Forms.Padding(0);
+            butBackupAddFile.Name = "butBackupAddFile";
+            butBackupAddFile.Size = new System.Drawing.Size(70, 55);
+            butBackupAddFile.TabIndex = 1;
+            butBackupAddFile.Text = "Add file";
+            butBackupAddFile.UseVisualStyleBackColor = true;
+            butBackupAddFile.Click += butBackupAddFile_Click;
             // 
             // butBackupAddFolder
             // 
-            this.butBackupAddFolder.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.butBackupAddFolder.Location = new System.Drawing.Point(508, 48);
-            this.butBackupAddFolder.Margin = new System.Windows.Forms.Padding(0);
-            this.butBackupAddFolder.Name = "butBackupAddFolder";
-            this.butBackupAddFolder.Size = new System.Drawing.Size(60, 48);
-            this.butBackupAddFolder.TabIndex = 2;
-            this.butBackupAddFolder.Text = "Add folder";
-            this.butBackupAddFolder.UseVisualStyleBackColor = true;
-            this.butBackupAddFolder.Click += new System.EventHandler(this.butBackupAddFolder_Click);
+            butBackupAddFolder.Dock = System.Windows.Forms.DockStyle.Fill;
+            butBackupAddFolder.Location = new System.Drawing.Point(591, 55);
+            butBackupAddFolder.Margin = new System.Windows.Forms.Padding(0);
+            butBackupAddFolder.Name = "butBackupAddFolder";
+            butBackupAddFolder.Size = new System.Drawing.Size(70, 55);
+            butBackupAddFolder.TabIndex = 2;
+            butBackupAddFolder.Text = "Add folder";
+            butBackupAddFolder.UseVisualStyleBackColor = true;
+            butBackupAddFolder.Click += butBackupAddFolder_Click;
             // 
             // butBackupRemove
             // 
-            this.butBackupRemove.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.butBackupRemove.Location = new System.Drawing.Point(508, 96);
-            this.butBackupRemove.Margin = new System.Windows.Forms.Padding(0);
-            this.butBackupRemove.Name = "butBackupRemove";
-            this.butBackupRemove.Size = new System.Drawing.Size(60, 48);
-            this.butBackupRemove.TabIndex = 3;
-            this.butBackupRemove.Text = "Remove";
-            this.butBackupRemove.UseVisualStyleBackColor = true;
-            this.butBackupRemove.Click += new System.EventHandler(this.butBackupRemove_Click);
+            butBackupRemove.Dock = System.Windows.Forms.DockStyle.Fill;
+            butBackupRemove.Location = new System.Drawing.Point(591, 110);
+            butBackupRemove.Margin = new System.Windows.Forms.Padding(0);
+            butBackupRemove.Name = "butBackupRemove";
+            butBackupRemove.Size = new System.Drawing.Size(70, 56);
+            butBackupRemove.TabIndex = 3;
+            butBackupRemove.Text = "Remove";
+            butBackupRemove.UseVisualStyleBackColor = true;
+            butBackupRemove.Click += butBackupRemove_Click;
             // 
             // lblBackupDir
             // 
-            this.lblBackupDir.AutoSize = true;
-            this.lblBackupDir.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblBackupDir.Location = new System.Drawing.Point(3, 516);
-            this.lblBackupDir.Margin = new System.Windows.Forms.Padding(3, 5, 3, 4);
-            this.lblBackupDir.Name = "lblBackupDir";
-            this.lblBackupDir.Size = new System.Drawing.Size(103, 13);
-            this.lblBackupDir.TabIndex = 15;
-            this.lblBackupDir.Text = "Backup directory";
+            lblBackupDir.AutoSize = true;
+            lblBackupDir.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            lblBackupDir.Location = new System.Drawing.Point(4, 591);
+            lblBackupDir.Margin = new System.Windows.Forms.Padding(4, 6, 4, 5);
+            lblBackupDir.Name = "lblBackupDir";
+            lblBackupDir.Size = new System.Drawing.Size(103, 13);
+            lblBackupDir.TabIndex = 15;
+            lblBackupDir.Text = "Backup directory";
             // 
             // tlpBackupDir
             // 
-            this.tlpBackupDir.AutoSize = true;
-            this.tlpBackupDir.ColumnCount = 2;
-            this.tlpBackupDir.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpBackupDir.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpBackupDir.Controls.Add(this.butBackupDir, 1, 0);
-            this.tlpBackupDir.Controls.Add(this.txtBackupDir, 0, 0);
-            this.tlpBackupDir.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tlpBackupDir.Location = new System.Drawing.Point(3, 536);
-            this.tlpBackupDir.Name = "tlpBackupDir";
-            this.tlpBackupDir.RowCount = 1;
-            this.tlpBackupDir.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpBackupDir.Size = new System.Drawing.Size(568, 20);
-            this.tlpBackupDir.TabIndex = 16;
+            tlpBackupDir.AutoSize = true;
+            tlpBackupDir.ColumnCount = 2;
+            tlpBackupDir.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tlpBackupDir.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+            tlpBackupDir.Controls.Add(butBackupDir, 1, 0);
+            tlpBackupDir.Controls.Add(txtBackupDir, 0, 0);
+            tlpBackupDir.Dock = System.Windows.Forms.DockStyle.Top;
+            tlpBackupDir.Location = new System.Drawing.Point(4, 612);
+            tlpBackupDir.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tlpBackupDir.Name = "tlpBackupDir";
+            tlpBackupDir.RowCount = 1;
+            tlpBackupDir.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tlpBackupDir.Size = new System.Drawing.Size(661, 27);
+            tlpBackupDir.TabIndex = 16;
             // 
             // butBackupDir
             // 
-            this.butBackupDir.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.butBackupDir.Location = new System.Drawing.Point(543, 0);
-            this.butBackupDir.Margin = new System.Windows.Forms.Padding(0);
-            this.butBackupDir.Name = "butBackupDir";
-            this.butBackupDir.Size = new System.Drawing.Size(25, 20);
-            this.butBackupDir.TabIndex = 3;
-            this.butBackupDir.Text = "...";
-            this.butBackupDir.UseVisualStyleBackColor = true;
-            this.butBackupDir.Click += new System.EventHandler(this.butBackupDir_Click);
+            butBackupDir.Dock = System.Windows.Forms.DockStyle.Fill;
+            butBackupDir.Location = new System.Drawing.Point(632, 0);
+            butBackupDir.Margin = new System.Windows.Forms.Padding(0);
+            butBackupDir.Name = "butBackupDir";
+            butBackupDir.Size = new System.Drawing.Size(29, 27);
+            butBackupDir.TabIndex = 3;
+            butBackupDir.Text = "...";
+            butBackupDir.UseVisualStyleBackColor = true;
+            butBackupDir.Click += butBackupDir_Click;
             // 
             // txtBackupDir
             // 
-            this.txtBackupDir.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtBackupDir.Location = new System.Drawing.Point(0, 0);
-            this.txtBackupDir.Margin = new System.Windows.Forms.Padding(0);
-            this.txtBackupDir.Name = "txtBackupDir";
-            this.txtBackupDir.Size = new System.Drawing.Size(543, 20);
-            this.txtBackupDir.TabIndex = 4;
+            txtBackupDir.Dock = System.Windows.Forms.DockStyle.Top;
+            txtBackupDir.Location = new System.Drawing.Point(0, 0);
+            txtBackupDir.Margin = new System.Windows.Forms.Padding(0);
+            txtBackupDir.Name = "txtBackupDir";
+            txtBackupDir.Size = new System.Drawing.Size(632, 23);
+            txtBackupDir.TabIndex = 4;
+            // 
+            // tlpButtons
+            // 
+            tlpButtons.ColumnCount = 2;
+            tlpButtons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tlpButtons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tlpButtons.Controls.Add(butSave, 0, 0);
+            tlpButtons.Controls.Add(butCancel, 1, 0);
+            tlpButtons.Dock = System.Windows.Forms.DockStyle.Fill;
+            tlpButtons.Location = new System.Drawing.Point(4, 676);
+            tlpButtons.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tlpButtons.Name = "tlpButtons";
+            tlpButtons.RowCount = 1;
+            tlpButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tlpButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            tlpButtons.Size = new System.Drawing.Size(661, 38);
+            tlpButtons.TabIndex = 10;
+            // 
+            // butSave
+            // 
+            butSave.Dock = System.Windows.Forms.DockStyle.Fill;
+            butSave.Location = new System.Drawing.Point(0, 0);
+            butSave.Margin = new System.Windows.Forms.Padding(0);
+            butSave.Name = "butSave";
+            butSave.Size = new System.Drawing.Size(330, 38);
+            butSave.TabIndex = 0;
+            butSave.Text = "Save";
+            butSave.UseVisualStyleBackColor = true;
+            butSave.Click += butSave_Click;
+            // 
+            // butCancel
+            // 
+            butCancel.Dock = System.Windows.Forms.DockStyle.Fill;
+            butCancel.Location = new System.Drawing.Point(330, 0);
+            butCancel.Margin = new System.Windows.Forms.Padding(0);
+            butCancel.Name = "butCancel";
+            butCancel.Size = new System.Drawing.Size(331, 38);
+            butCancel.TabIndex = 1;
+            butCancel.Text = "Cancel";
+            butCancel.UseVisualStyleBackColor = true;
+            butCancel.Click += butCancel_Click;
+            // 
+            // tlpCheckBox
+            // 
+            tlpCheckBox.ColumnCount = 2;
+            tlpCheckBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tlpCheckBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tlpCheckBox.Controls.Add(cbAutoStart, 0, 0);
+            tlpCheckBox.Controls.Add(cbAutoRestartOnCrash, 1, 0);
+            tlpCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            tlpCheckBox.Location = new System.Drawing.Point(3, 645);
+            tlpCheckBox.Name = "tlpCheckBox";
+            tlpCheckBox.RowCount = 1;
+            tlpCheckBox.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tlpCheckBox.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tlpCheckBox.Size = new System.Drawing.Size(663, 25);
+            tlpCheckBox.TabIndex = 19;
+            // 
+            // cbAutoStart
+            // 
+            cbAutoStart.AutoSize = true;
+            cbAutoStart.Dock = System.Windows.Forms.DockStyle.Fill;
+            cbAutoStart.Location = new System.Drawing.Point(3, 3);
+            cbAutoStart.Name = "cbAutoStart";
+            cbAutoStart.Size = new System.Drawing.Size(325, 19);
+            cbAutoStart.TabIndex = 0;
+            cbAutoStart.Text = "Auto start at Startup";
+            cbAutoStart.UseVisualStyleBackColor = true;
+            cbAutoStart.CheckedChanged += cbAutoStart_CheckedChanged;
+            // 
+            // cbAutoRestartOnCrash
+            // 
+            cbAutoRestartOnCrash.AutoSize = true;
+            cbAutoRestartOnCrash.Dock = System.Windows.Forms.DockStyle.Fill;
+            cbAutoRestartOnCrash.Enabled = false;
+            cbAutoRestartOnCrash.Location = new System.Drawing.Point(334, 3);
+            cbAutoRestartOnCrash.Name = "cbAutoRestartOnCrash";
+            cbAutoRestartOnCrash.Size = new System.Drawing.Size(326, 19);
+            cbAutoRestartOnCrash.TabIndex = 1;
+            cbAutoRestartOnCrash.Text = "Auto restart on Crash";
+            cbAutoRestartOnCrash.UseVisualStyleBackColor = true;
+            cbAutoRestartOnCrash.CheckedChanged += cbAutoRestartOnCrash_CheckedChanged;
             // 
             // folderBrowserDialogCtrl
             // 
-            this.folderBrowserDialogCtrl.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            folderBrowserDialogCtrl.RootFolder = System.Environment.SpecialFolder.MyComputer;
             // 
             // frmGameConfig
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(584, 616);
-            this.Controls.Add(this.tlpGlobal);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "frmGameConfig";
-            this.Padding = new System.Windows.Forms.Padding(5);
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Game configuration";
-            this.tlpGlobal.ResumeLayout(false);
-            this.tlpGlobal.PerformLayout();
-            this.tlpBeforeStart.ResumeLayout(false);
-            this.tlpBeforeStart.PerformLayout();
-            this.tlpProgram.ResumeLayout(false);
-            this.tlpProgram.PerformLayout();
-            this.tlpLogs.ResumeLayout(false);
-            this.tlpLogs.PerformLayout();
-            this.tlpButtons.ResumeLayout(false);
-            this.tlpWorkingDir.ResumeLayout(false);
-            this.tlpWorkingDir.PerformLayout();
-            this.tlpBackup.ResumeLayout(false);
-            this.tlpBackupDir.ResumeLayout(false);
-            this.tlpBackupDir.PerformLayout();
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(681, 729);
+            Controls.Add(tlpGlobal);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "frmGameConfig";
+            Padding = new System.Windows.Forms.Padding(6);
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Text = "Game configuration";
+            Shown += frmGameConfig_Shown;
+            tlpGlobal.ResumeLayout(false);
+            tlpGlobal.PerformLayout();
+            tlpProgram.ResumeLayout(false);
+            tlpProgram.PerformLayout();
+            tlpWorkingDir.ResumeLayout(false);
+            tlpWorkingDir.PerformLayout();
+            tlpBeforeStart.ResumeLayout(false);
+            tlpBeforeStart.PerformLayout();
+            tlpLogs.ResumeLayout(false);
+            tlpLogs.PerformLayout();
+            tlpBackup.ResumeLayout(false);
+            tlpBackupDir.ResumeLayout(false);
+            tlpBackupDir.PerformLayout();
+            tlpButtons.ResumeLayout(false);
+            tlpCheckBox.ResumeLayout(false);
+            tlpCheckBox.PerformLayout();
+            ResumeLayout(false);
 
         }
 
@@ -623,6 +694,9 @@ namespace GameserverControl
         private System.Windows.Forms.Button butBeforeStart;
         private System.Windows.Forms.TextBox txtBeforeStart;
         private System.Windows.Forms.Label lblBeforeStart;
+        private System.Windows.Forms.TableLayoutPanel tlpCheckBox;
+        private System.Windows.Forms.CheckBox cbAutoStart;
+        private System.Windows.Forms.CheckBox cbAutoRestartOnCrash;
     }
 }
 

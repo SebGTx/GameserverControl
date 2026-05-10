@@ -17,6 +17,52 @@ namespace GameserverControl
             InitializeComponent();
             this.ActiveControl = txtName;
         }
+        private void frmGameConfig_Shown(object sender, EventArgs e)
+        {
+            bool result;
+            // txtGUID
+            txtGUID.Text = newGameConfig.Attributes["guid"].Value;
+            // txtName
+            txtName.Text = newGameConfig.SelectSingleNode("./Name").InnerText;
+            // txtProgram
+            txtProgram.Text = newGameConfig.SelectSingleNode("./Program").InnerText;
+            // txtArgs
+            txtArgs.Text = newGameConfig.SelectSingleNode("./Args").InnerText;
+            // txtWorkingDir
+            txtWorkingDir.Text = newGameConfig.SelectSingleNode("./WorkingDir").InnerText;
+            // txtBeforeStart
+            txtBeforeStart.Text = newGameConfig.SelectSingleNode("./BeforeStart").InnerText;
+            // txtLogs
+            txtLogs.Text = newGameConfig.SelectSingleNode("./Logs").InnerText;
+            // lstBackup
+            if (newGameConfig.SelectSingleNode("./Backup").HasChildNodes)
+            {
+                foreach (XmlNode childNode in newGameConfig.SelectSingleNode("./Backup").ChildNodes)
+                {
+                    addBackupPath(childNode.InnerText);
+                }
+            }
+            // txtBackupDir
+            txtBackupDir.Text = newGameConfig.SelectSingleNode("./BackupDir").InnerText;
+            // cbAutoStart
+            if (bool.TryParse(newGameConfig.SelectSingleNode("./AutoStart").InnerText, out result))
+            {
+                cbAutoStart.Checked = result;
+            }
+            else
+            {
+                cbAutoStart.Checked = false;
+            }
+            // cbAutoRestartOnCrash
+            if (bool.TryParse(newGameConfig.SelectSingleNode("./AutoRestartOnCrash").InnerText, out result))
+            {
+                cbAutoRestartOnCrash.Checked = result;
+            }
+            else
+            {
+                cbAutoRestartOnCrash.Checked = false;
+            }
+        }
 
         private void toolTipBalloon(Control editControl, Control labelControl, string Error)
         {
@@ -36,7 +82,8 @@ namespace GameserverControl
 
         private bool FieldControl()
         {
-            if (txtName.Text.Trim().Length == 0) {
+            if (txtName.Text.Trim().Length == 0)
+            {
                 toolTipBalloon(txtName, lblName, "Mandatory field");
                 return false;
             }
@@ -56,8 +103,9 @@ namespace GameserverControl
             {
                 ActualFileDir = ActualFile.Substring(0, ActualFile.LastIndexOf("\\"));
             }
-            if (Directory.Exists(ActualFileDir)) { openFileDialogCtrl.InitialDirectory = ActualFileDir;  }
-            if (File.Exists(ActualFile)) {
+            if (Directory.Exists(ActualFileDir)) { openFileDialogCtrl.InitialDirectory = ActualFileDir; }
+            if (File.Exists(ActualFile))
+            {
                 openFileDialogCtrl.FileName = ActualFile.Substring(ActualFile.LastIndexOf("\\") + 1);
             }
             else
@@ -108,7 +156,8 @@ namespace GameserverControl
                     folderBrowserDialogCtrl.SelectedPath = null;
                 }
             }
-            if (folderBrowserDialogCtrl.ShowDialog(this) == DialogResult.OK) {
+            if (folderBrowserDialogCtrl.ShowDialog(this) == DialogResult.OK)
+            {
                 txtWorkingDir.Text = folderBrowserDialogCtrl.SelectedPath;
             }
         }
@@ -118,7 +167,7 @@ namespace GameserverControl
             txtLogs.Text = ChooseFile(txtLogs, "Log files (*.log)|*.log|Text files (*.txt)|*.log|All files (*.*)|*.*");
         }
 
-        public void addBackupPath(string backupPath)
+        private void addBackupPath(string backupPath)
         {
             addBackupPath(backupPath, true);
         }
@@ -189,6 +238,16 @@ namespace GameserverControl
             }
         }
 
+        private void cbAutoStart_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cbAutoRestartOnCrash_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
         private void butSave_Click(object sender, EventArgs e)
         {
             if (FieldControl())
@@ -201,6 +260,8 @@ namespace GameserverControl
                 newGameConfig.SelectSingleNode("./BeforeStart").InnerText = txtBeforeStart.Text;
                 newGameConfig.SelectSingleNode("./Logs").InnerText = txtLogs.Text;
                 newGameConfig.SelectSingleNode("./BackupDir").InnerText = txtBackupDir.Text;
+                newGameConfig.SelectSingleNode("./AutoStart").InnerText = cbAutoStart.Checked.ToString().ToLower();
+                newGameConfig.SelectSingleNode("./AutoRestartOnCrash").InnerText = cbAutoRestartOnCrash.Checked.ToString().ToLower();
                 if (newGame)
                 {
                     GCAC.XMLAddGame(newGameConfig);

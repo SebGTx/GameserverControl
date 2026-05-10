@@ -144,6 +144,7 @@ namespace GameserverControl
             }
 
             // Read Games Config
+            List<XmlNode> GameXMLNodes = new List<XmlNode> { };
             if (GamesXMLNode.HasChildNodes)
             {
                 GamesToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
@@ -151,8 +152,12 @@ namespace GameserverControl
                 foreach (XmlNode GameXMLNode in GamesXMLNode.ChildNodes)
                 {
                     string gameGUID = GameXMLNode.Attributes["guid"].Value;
-                    newGameConfig = XMLCreateOrUpdateGameConfig(GamesXMLNode.SelectSingleNode("./Game[@guid='" + gameGUID + "']"));
+                    newGameConfig = XMLCreateOrUpdateGameConfig(gameGUID);
                     XMLAddGame(newGameConfig);
+                    if (GameXMLNode.SelectSingleNode("./AutoStart").InnerText == "true")
+                    {
+                        GameXMLNodes.Add(GameXMLNode);
+                    }
                 }
             }
 
@@ -170,6 +175,12 @@ namespace GameserverControl
             catch (HttpListenerException e)
             {
                 MessageBox.Show("Unable to listen on port " + WebServerXMLNode.SelectSingleNode("./Port").InnerText + "\rYou can't control GameserverControl from another computer\r\rTry to correct this with GCSetComputerSettings and restart GameserverControl\r\rError message :\r" + e.Message, "Can't start webserver on specified port", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            // Start Autostart Games
+            foreach (XmlNode GameXMLNode in GameXMLNodes)
+            {
+                ProcessStart(GameXMLNode);
             }
         }
 
@@ -203,6 +214,14 @@ namespace GameserverControl
 
         // *********************************************************
         // XML functions
+
+        public XmlNode CreateXmlNodeWithValue(string name, string value)
+        {
+            XmlNode node = GCXMLConfig.CreateNode(XmlNodeType.Element, name, null);
+            node.InnerText = value;
+            return node;
+        }
+
         public void XMLSaveConfig()
         {
             // Write XML Config
@@ -279,15 +298,10 @@ namespace GameserverControl
             GamesToolStripMenuItem.DropDownItems.Add(GameMenuToolStripItem);
         }
 
-        private XmlNode XMLCreateOrUpdateGameConfig()
-        {
-            return XMLCreateOrUpdateGameConfig(null);
-        }
-
-        private XmlNode XMLCreateOrUpdateGameConfig(XmlNode GameConfig)
+        private XmlNode XMLCreateOrUpdateGameConfig(string gameGUID)
         {
             XmlNode newGameConfig;
-            XmlNode GamesXMLNode = GCXMLConfig.SelectSingleNode("/Games");
+            XmlNode GameConfig = GamesXMLNode.SelectSingleNode("./Game[@guid='" + gameGUID + "']");
             if (GameConfig != null)
             {
                 newGameConfig = GameConfig;
@@ -295,16 +309,47 @@ namespace GameserverControl
             else
             {
                 newGameConfig = GCXMLConfig.CreateNode(XmlNodeType.Element, "Game", null);
+                newGameConfig.Attributes.Append(GCXMLConfig.CreateAttribute("guid"));
+                newGameConfig.Attributes["guid"].Value = gameGUID;
             }
-            if (newGameConfig.Attributes["guid"] == null) { newGameConfig.Attributes.Append(GCXMLConfig.CreateAttribute("guid")); }
-            if (newGameConfig.SelectSingleNode("./Name") == null) { newGameConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "Name", null)); }
-            if (newGameConfig.SelectSingleNode("./Program") == null) { newGameConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "Program", null)); }
-            if (newGameConfig.SelectSingleNode("./Args") == null) { newGameConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "Args", null)); }
-            if (newGameConfig.SelectSingleNode("./WorkingDir") == null) { newGameConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "WorkingDir", null)); }
-            if (newGameConfig.SelectSingleNode("./BeforeStart") == null) { newGameConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "BeforeStart", null)); }
-            if (newGameConfig.SelectSingleNode("./Logs") == null) { newGameConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "Logs", null)); }
-            if (newGameConfig.SelectSingleNode("./Backup") == null) { newGameConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "Backup", null)); }
-            if (newGameConfig.SelectSingleNode("./BackupDir") == null) { newGameConfig.AppendChild(GCXMLConfig.CreateNode(XmlNodeType.Element, "BackupDir", null)); }
+            return XMLUpdateGameConfig(newGameConfig);
+        }
+
+        private XmlNode XMLUpdateGameConfig(XmlNode GameConfig)
+        {
+            XmlNode newGameConfig = GameConfig;
+            if (GameConfig != null)
+            {
+                Dictionary<string, string> NodeDefault = new Dictionary<string, string>
+                {
+                    // Node to add if not exist, with default value
+                    { "Name", "" },
+                    { "Program", "" },
+                    { "Args", "" },
+                    { "WorkingDir", "" },
+                    { "BeforeStart", "" },
+                    { "Logs", "" },
+                    { "Backup", "" },
+                    { "BackupDir", "" },
+                    { "AutoStart", "false" },
+                    { "AutoRestartOnCrash", "false" },
+                    // Node to remove when value is null
+                    { "AutoRestart", null },
+                };
+                foreach (var item in NodeDefault)
+                {
+                    if ((newGameConfig.SelectSingleNode($"./{item.Key}") == null) && (item.Value != null))
+                    {
+                        // Add Node if not exist and default value is not null
+                        newGameConfig.AppendChild(CreateXmlNodeWithValue(item.Key, item.Value));
+                    }
+                    else if ((newGameConfig.SelectSingleNode($"./{item.Key}") != null) && (item.Value == null))
+                    {
+                        // Remove Node if exist and default value is null
+                        newGameConfig.RemoveChild(newGameConfig.SelectSingleNode($"./{item.Key}"));
+                    }
+                }
+            }
             return newGameConfig;
         }
 
@@ -365,33 +410,23 @@ namespace GameserverControl
             {
                 GameConfigForm.newGame = true;
                 gameGUID = Guid.NewGuid().ToString();
-                GameXMLNode = XMLCreateOrUpdateGameConfig();
             }
             else
             {
                 GameConfigForm.newGame = false;
-                gameGUID = senderToolStripMenuItem.OwnerItem.Tag.ToString();
-                GameXMLNode = XMLCreateOrUpdateGameConfig( GamesXMLNode.SelectSingleNode("./Game[@guid='" + gameGUID + "']") );
-                GameConfigForm.Controls["tlpGlobal"].Controls["txtName"].Text = GameXMLNode.SelectSingleNode("./Name").InnerText;
-                GameConfigForm.Controls["tlpGlobal"].Controls["tlpProgram"].Controls["txtProgram"].Text = GameXMLNode.SelectSingleNode("./Program").InnerText;
-                GameConfigForm.Controls["tlpGlobal"].Controls["txtArgs"].Text = GameXMLNode.SelectSingleNode("./Args").InnerText;
-                GameConfigForm.Controls["tlpGlobal"].Controls["tlpWorkingDir"].Controls["txtWorkingDir"].Text = GameXMLNode.SelectSingleNode("./WorkingDir").InnerText;
-                GameConfigForm.Controls["tlpGlobal"].Controls["tlpBeforeStart"].Controls["txtBeforeStart"].Text = GameXMLNode.SelectSingleNode("./BeforeStart").InnerText;
-                GameConfigForm.Controls["tlpGlobal"].Controls["tlpLogs"].Controls["txtLogs"].Text = GameXMLNode.SelectSingleNode("./Logs").InnerText;
-                if (GameXMLNode.SelectSingleNode("./Backup").HasChildNodes)
-                {
-                    foreach (XmlNode childNode in GameXMLNode.SelectSingleNode("./Backup").ChildNodes)
-                    {
-                        GameConfigForm.addBackupPath(childNode.InnerText);
-                    }
-                }
-                GameConfigForm.Controls["tlpGlobal"].Controls["tlpBackupDir"].Controls["txtBackupDir"].Text = GameXMLNode.SelectSingleNode("./BackupDir").InnerText;
+                gameGUID = senderToolStripMenuItem.OwnerItem.Tag.ToString();                
             }
 
             GameConfigForm.GamesConfig = GCXMLConfig;
+            GameXMLNode = XMLCreateOrUpdateGameConfig(gameGUID);
             GameConfigForm.newGameConfig = GameXMLNode;
-            GameConfigForm.Controls["tlpGlobal"].Controls["txtGUID"].Text = gameGUID;
             GameConfigForm.ShowDialog();
+            // After close track name change
+            GameXMLNode = XMLCreateOrUpdateGameConfig(gameGUID);
+            if (senderToolStripMenuItem.OwnerItem.Text != GameXMLNode.SelectSingleNode("./Name").InnerText)
+            {
+                senderToolStripMenuItem.OwnerItem.Text = GameXMLNode.SelectSingleNode("./Name").InnerText;
+            }
         }
 
         private void MenuGameRemove_Click(object sender, EventArgs e)
@@ -403,7 +438,7 @@ namespace GameserverControl
                 if (result == DialogResult.Yes)
                 {
                     string gameGUID = senderToolStripMenuItem.OwnerItem.Tag.ToString();
-                    XmlNode GameXMLNode = XMLCreateOrUpdateGameConfig(GamesXMLNode.SelectSingleNode("./Game[@guid='" + gameGUID + "']"));
+                    XmlNode GameXMLNode = XMLCreateOrUpdateGameConfig(gameGUID);
                     GamesXMLNode.RemoveChild(GameXMLNode);
                     senderToolStripMenuItem.OwnerItem.Dispose();
                 }
@@ -553,44 +588,67 @@ namespace GameserverControl
                 // Before Start Process
                 if (programBeforeStart.Length >= 1)
                 {
+                    try
+                    {
+                        startInfo = new ProcessStartInfo();
+                        startInfo.EnvironmentVariables.Add("GameGUID", gameGUID);
+                        startInfo.WindowStyle = ProcessWindowStyle.Normal;
+                        startInfo.UseShellExecute = false;
+                        startInfo.FileName = programBeforeStart;
+                        if (Directory.Exists(GameXMLNode.SelectSingleNode("./WorkingDir").InnerText))
+                        {
+                            startInfo.WorkingDirectory = GameXMLNode.SelectSingleNode("./WorkingDir").InnerText;
+                        }
+                        process = new Process();
+                        process.StartInfo = startInfo;
+                        process.Start();
+                        BeforeStartGameProcess.Add(gameGUID, process);
+                        process.WaitForExit();
+                        BeforeStartGameProcess.Remove(gameGUID);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("An error occurred while trying to start the before start process\r\rError message :\r" + ex.Message, "Before start process error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+
+                // Process start
+                try
+                {
                     startInfo = new ProcessStartInfo();
                     startInfo.EnvironmentVariables.Add("GameGUID", gameGUID);
                     startInfo.WindowStyle = ProcessWindowStyle.Normal;
                     startInfo.UseShellExecute = false;
-                    startInfo.FileName = programBeforeStart;
+                    startInfo.FileName = programToStart;
                     if (Directory.Exists(GameXMLNode.SelectSingleNode("./WorkingDir").InnerText))
                     {
                         startInfo.WorkingDirectory = GameXMLNode.SelectSingleNode("./WorkingDir").InnerText;
                     }
+                    if (GameXMLNode.SelectSingleNode("./Args").InnerText.Length > 0)
+                    {
+                        startInfo.Arguments = GameXMLNode.SelectSingleNode("./Args").InnerText;
+                    }
+
                     process = new Process();
                     process.StartInfo = startInfo;
+                    process.EnableRaisingEvents = true;
+                    process.Exited += new EventHandler(ProcessExited);
                     process.Start();
-                    BeforeStartGameProcess.Add(gameGUID, process);
-                    process.WaitForExit();
-                    BeforeStartGameProcess.Remove(gameGUID);
+                    GameProcess.Add(gameGUID, process);
                 }
-
-                // Process start
-                startInfo = new ProcessStartInfo();
-                startInfo.EnvironmentVariables.Add("GameGUID", gameGUID);
-                startInfo.WindowStyle = ProcessWindowStyle.Normal;
-                startInfo.UseShellExecute = false;
-                startInfo.FileName = programToStart;
-                if (Directory.Exists(GameXMLNode.SelectSingleNode("./WorkingDir").InnerText))
+                catch (Exception ex)
                 {
-                    startInfo.WorkingDirectory = GameXMLNode.SelectSingleNode("./WorkingDir").InnerText;
+                    MessageBox.Show("An error occurred while trying to start the game\r\rError message :\r" + ex.Message, "Game start error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    GamesToolStripMenuItem.GetCurrentParent().Invoke(new System.Windows.Forms.MethodInvoker(delegate
+                    {
+                        ToolStripMenuItem senderToolStripMenuItem = (ToolStripMenuItem)GamesToolStripMenuItem.DropDownItems[gameGUID];
+                        senderToolStripMenuItem.Image = Properties.Resources.RedLightImg;
+                        ProcessEnableDisableToolStripMenuItem(gameGUID, "start", true);
+                        ProcessEnableDisableToolStripMenuItem(gameGUID, "edit", true);
+                        ProcessEnableDisableToolStripMenuItem(gameGUID, "remove", true);
+                    }));
+                    return;
                 }
-                if (GameXMLNode.SelectSingleNode("./Args").InnerText.Length > 0)
-                {
-                    startInfo.Arguments = GameXMLNode.SelectSingleNode("./Args").InnerText;
-                }
-
-                process = new Process();
-                process.StartInfo = startInfo;
-                process.EnableRaisingEvents = true;
-                process.Exited += new EventHandler(ProcessExited);
-                process.Start();
-                GameProcess.Add(gameGUID, process);
 
                 // Systray menu management
                 GamesToolStripMenuItem.GetCurrentParent().Invoke(new System.Windows.Forms.MethodInvoker(delegate
