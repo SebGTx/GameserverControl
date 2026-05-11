@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Management;
 using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
-using System.Management;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GameserverControl
 {
@@ -64,6 +66,7 @@ namespace GameserverControl
 
         private NotifyIcon trayIcon;
         private ToolStripMenuItem GamesToolStripMenuItem;
+        private ToolStripMenuItem SystemToolStripMenuItem;
 
         private string GCProgramDataFolder;
         private string GCXMLConfigFile;
@@ -98,10 +101,21 @@ namespace GameserverControl
                 ContextMenuStrip = new ContextMenuStrip(),
                 Visible = true
             };
+            // Submenu Games
             GamesToolStripMenuItem = new ToolStripMenuItem("Games", Properties.Resources.controller);
             GamesToolStripMenuItem.Name = "games";
             GamesToolStripMenuItem.DropDownItems.Add(new ToolStripMenuItem("New", Properties.Resources.controller_add, new EventHandler(MenuGameNewEdit_Click)));
             trayIcon.ContextMenuStrip.Items.Add(GamesToolStripMenuItem);
+            trayIcon.ContextMenuStrip.Items.Add(new ToolStripSeparator());
+            // Submenu System
+            SystemToolStripMenuItem = new ToolStripMenuItem("System", Properties.Resources.server);
+            SystemToolStripMenuItem.Name = "system";
+            SystemToolStripMenuItem.DropDownItems.Add(new ToolStripMenuItem("Clean Reboot", Properties.Resources.arrow_rotate_anticlockwise, new EventHandler(MenuCleanReboot_Click)));
+            SystemToolStripMenuItem.DropDownItems.Add(new ToolStripMenuItem("Clean Shutdown", Properties.Resources.lightning_delete, new EventHandler(MenuCleanShutdown_Click)));
+            SystemToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
+            SystemToolStripMenuItem.DropDownItems.Add(new ToolStripMenuItem("Forced Reboot", Properties.Resources.error, new EventHandler(MenuForcedReboot_Click)));
+            SystemToolStripMenuItem.DropDownItems.Add(new ToolStripMenuItem("Forced Shutdown", Properties.Resources.exclamation, new EventHandler(MenuForcedShutdown_Click)));
+            trayIcon.ContextMenuStrip.Items.Add(SystemToolStripMenuItem);
             trayIcon.ContextMenuStrip.Items.Add(new ToolStripSeparator());
             trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem("About", Properties.Resources.information, new EventHandler(MenuAbout_Click)));
             trayIcon.ContextMenuStrip.Items.Add(new ToolStripSeparator());
@@ -185,9 +199,34 @@ namespace GameserverControl
         }
 
         // *********************************************************
-        // System functions
-        public void SystemShutdownOrReboot(bool reboot)
+        // General functions
+        static async Task WaitUntilEmptyAsync<TKey, TValue>(
+            Dictionary<TKey, TValue> dict,
+            int checkIntervalMs = 100,
+            CancellationToken cancellationToken = default)
         {
+            while (true)
+            {
+                lock (dict) // Sécurise l'accès si multi-thread
+                {
+                    if (dict.Count == 0)
+                        return;
+                }
+
+                // Évite de bloquer le CPU
+                await Task.Delay(checkIntervalMs, cancellationToken);
+            }
+        }
+
+        // *********************************************************
+        // System functions
+        public async void SystemShutdownOrReboot(bool reboot, bool force = false)
+        {
+            if (!force)
+            {
+                await ProcessStopAll();
+            }           
+
             ManagementBaseObject mboShutdown = null;
             ManagementClass mcWin32 = new ManagementClass("Win32_OperatingSystem");
             mcWin32.Get();
@@ -200,10 +239,12 @@ namespace GameserverControl
             if (reboot)
             {
                 mboShutdownParams["Flags"] = "2";
+                Debug.WriteLine("Rebooting system...");
             }
             else
             {
                 mboShutdownParams["Flags"] = "1";
+                Debug.WriteLine("Shutting down system...");
             }
             mboShutdownParams["Reserved"] = "0";
             foreach (ManagementObject manObj in mcWin32.GetInstances())
@@ -442,6 +483,41 @@ namespace GameserverControl
                     GamesXMLNode.RemoveChild(GameXMLNode);
                     senderToolStripMenuItem.OwnerItem.Dispose();
                 }
+            }
+        }
+        private void MenuCleanReboot_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Do you want to reboot this server ?", "Confirmation", MessageBoxButtons.YesNo);
+            if (result == DialogResult.Yes)
+            {
+                SystemShutdownOrReboot(true);
+            }
+        }
+
+        private void MenuForcedReboot_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Do you want to force this server to reboot ?", "Confirmation", MessageBoxButtons.YesNo);
+            if (result == DialogResult.Yes)
+            {
+                SystemShutdownOrReboot(true, true);
+            }
+        }
+
+        private void MenuCleanShutdown_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Do you want to shutdown this server ?", "Confirmation", MessageBoxButtons.YesNo);
+            if (result == DialogResult.Yes)
+            {
+                SystemShutdownOrReboot(false);
+            }
+        }
+
+        private void MenuForcedShutdown_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Do you want to force this server to shutdown ?", "Confirmation", MessageBoxButtons.YesNo);
+            if (result == DialogResult.Yes)
+            {
+                SystemShutdownOrReboot(false, true);
             }
         }
 
@@ -701,6 +777,30 @@ namespace GameserverControl
             });
         }
 
+        private async Task ProcessStopAll()
+        {
+            await WaitUntilEmptyAsync(BeforeStartGameProcess, checkIntervalMs: 1000);
+            await Task.Delay(1000);
+            foreach (KeyValuePair<string, Process> entry in GameProcess)
+            {
+                // do something with entry.Value or entry.Key
+                Process process = entry.Value;
+                process.CloseMainWindow();
+                try
+                {
+                    for (int i = 1; i < 10; i++)
+                    {
+                        System.Threading.Thread.Sleep(1000);
+                        if (process.HasExited) break;
+                    }
+                    if (!process.HasExited) { process.Kill(); }
+                }
+                catch { }
+            }
+            await Task.Delay(1000);
+            await WaitUntilEmptyAsync(BackupGameProcess, checkIntervalMs: 1000);
+        }
+
         private void ProcessExited(object sender, System.EventArgs e)
         {
             // Process information
@@ -829,13 +929,15 @@ namespace GameserverControl
                     if ((req.HttpMethod == "GET") && (req.Url.AbsolutePath == "/api/v1/configs")) { result = HTTPResultConfigs(); }
 
                     // URI /api/v1/servers/*
-                    GameUriMatch = Regex.Match(req.Url.AbsolutePath, "/api/v1/servers/(?<action>shutdown|reboot)", RegexOptions.IgnoreCase);
+                    GameUriMatch = Regex.Match(req.Url.AbsolutePath, "/api/v1/servers/(?<action>shutdown|reboot|forcedshutdown|forcedreboot)", RegexOptions.IgnoreCase);
                     if (GameUriMatch.Success == true)
                     {
                         if (req.HttpMethod == "POST")
                         {
                             if (GameUriMatch.Groups["action"].Value == "shutdown") { result = HTTPResultShutdownServer(); }
                             if (GameUriMatch.Groups["action"].Value == "reboot") { result = HTTPResultRebootServer(); }
+                            if (GameUriMatch.Groups["action"].Value == "forcedshutdown") { result = HTTPResultShutdownServer(true); }
+                            if (GameUriMatch.Groups["action"].Value == "forcedreboot") { result = HTTPResultRebootServer(true); }
                         }
                     }
 
@@ -874,7 +976,7 @@ namespace GameserverControl
                 }
 
                 // Write the response info
-                byte[] data = Encoding.UTF8.GetBytes(String.Format(result.Content));
+                byte[] data = Encoding.UTF8.GetBytes(string.Format(result.Content));
                 resp.ContentType = result.ContentType;
                 resp.ContentEncoding = Encoding.UTF8;
                 resp.ContentLength64 = data.LongLength;
@@ -906,7 +1008,7 @@ namespace GameserverControl
             return result;
         }
 
-        private HTTPResult HTTPResultShutdownServer()
+        private HTTPResult HTTPResultShutdownServer(bool force = false)
         {
             XmlDocument XMLResult = new XmlDocument();
             XmlNode XMLResultNode = XMLResult.AppendChild(XMLResult.CreateNode(XmlNodeType.Element, "Result", null));
@@ -917,18 +1019,25 @@ namespace GameserverControl
             tmpNode.InnerText = "Shutdown";
             XMLResultNode.AppendChild(tmpNode);
             tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Message", null);
-            tmpNode.InnerText = "The server will shutdown";
+            if (!force)
+            {
+                tmpNode.InnerText = "The server will shutdown";
+            }
+            else
+            {
+                tmpNode.InnerText = "The server will be forced to shutdown";
+            }
             XMLResultNode.AppendChild(tmpNode);
             tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
             tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
             XMLResultNode.AppendChild(tmpNode);
             result = new HTTPResult(202, "application/xml", XMLResult.OuterXml);
 
-            SystemShutdownOrReboot(false);
+            SystemShutdownOrReboot(false, force);
             return result;
         }
 
-        private HTTPResult HTTPResultRebootServer()
+        private HTTPResult HTTPResultRebootServer(bool force = false)
         {
             XmlDocument XMLResult = new XmlDocument();
             XmlNode XMLResultNode = XMLResult.AppendChild(XMLResult.CreateNode(XmlNodeType.Element, "Result", null));
@@ -939,14 +1048,21 @@ namespace GameserverControl
             tmpNode.InnerText = "Reboot";
             XMLResultNode.AppendChild(tmpNode);
             tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Message", null);
-            tmpNode.InnerText = "The server will reboot";
+            if (!force)
+            {
+                tmpNode.InnerText = "The server will reboot";
+            }
+            else
+            {
+                tmpNode.InnerText = "The server will be forced to reboot";
+            }
             XMLResultNode.AppendChild(tmpNode);
             tmpNode = XMLResult.CreateNode(XmlNodeType.Element, "Timestamp", null);
             tmpNode.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss+HH:mm");
             XMLResultNode.AppendChild(tmpNode);
             result = new HTTPResult(202, "application/xml", XMLResult.OuterXml);
 
-            SystemShutdownOrReboot(true);
+            SystemShutdownOrReboot(true, force);
             return result;
         }
 
