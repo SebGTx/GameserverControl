@@ -247,10 +247,12 @@ namespace GameserverControl
                 Debug.WriteLine("Shutting down system...");
             }
             mboShutdownParams["Reserved"] = "0";
+            /*
             foreach (ManagementObject manObj in mcWin32.GetInstances())
             {
                 mboShutdown = manObj.InvokeMethod("Win32Shutdown", mboShutdownParams, null);
             }
+            */
         }
 
         // *********************************************************
